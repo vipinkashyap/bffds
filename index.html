@@ -795,24 +795,10 @@ const countries=[
 ];
 
 // ═══════════════════════════════════════════════
-// THREE.JS DOT-MATRIX GLOBE
+// THREE.JS REALISTIC GLOBE
 // ═══════════════════════════════════════════════
-let scene,camera,renderer,globe,countryMeshes=[],raycaster,mouse;
+let scene,camera,renderer,globe,countryMeshes=[],raycaster,mouse,cloudLayer,starField,nightLights,atmosphereOuter,atmosphereInner;
 const canvas=document.getElementById('globeCanvas');
-
-// Point-in-polygon test (ray casting)
-function ptInPoly(testLon,testLat,poly){
-  let inside=false;
-  for(let i=0,j=poly.length-1;i<poly.length;j=i++){
-    const xi=poly[i][0],yi=poly[i][1],xj=poly[j][0],yj=poly[j][1];
-    if((yi>testLat)!==(yj>testLat)&&testLon<(xj-xi)*(testLat-yi)/(yj-yi)+xi) inside=!inside;
-  }
-  return inside;
-}
-function isLand(lat,lon){
-  for(const poly of LAND_POLYS){if(ptInPoly(lon,lat,poly))return true}
-  return false;
-}
 
 function latLonToVec3(lat,lon,r){
   const phi=(90-lat)*Math.PI/180,theta=(lon+180)*Math.PI/180;
@@ -821,87 +807,178 @@ function latLonToVec3(lat,lon,r){
 
 function initGlobe(){
   const W=canvas.clientWidth,H=canvas.clientHeight;
+  const isMobile=W<600;
   scene=new THREE.Scene();
   camera=new THREE.PerspectiveCamera(45,W/H,0.1,1000);
-  camera.position.z=3.0;
+  camera.position.z=2.9;
 
   renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
   renderer.setSize(W,H);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.outputEncoding=THREE.sRGBEncoding;
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure=isMobile?1.0:1.08;
+
+  // ── STAR FIELD ──
+  const starCount=isMobile?900:2200;
+  const starPositions=[],starColors=[];
+  for(let i=0;i<starCount;i++){
+    const radius=3.8+Math.random()*4.5;
+    const y=Math.random()*2-1;
+    const theta=Math.random()*Math.PI*2;
+    const ring=Math.sqrt(1-y*y);
+    starPositions.push(radius*ring*Math.cos(theta),radius*y,radius*ring*Math.sin(theta));
+    const tint=0.82+Math.random()*0.18;
+    if(Math.random()<0.82) starColors.push(0.70*tint,0.84*tint,1.0*tint);
+    else starColors.push(1.0*tint,0.88*tint,0.76*tint);
+  }
+  const starGeo=new THREE.BufferGeometry();
+  starGeo.setAttribute('position',new THREE.Float32BufferAttribute(starPositions,3));
+  starGeo.setAttribute('color',new THREE.Float32BufferAttribute(starColors,3));
+  const starMat=new THREE.PointsMaterial({
+    size:isMobile?0.012:0.01,
+    vertexColors:true,transparent:true,opacity:0.85,
+    depthWrite:false,sizeAttenuation:true
+  });
+  starField=new THREE.Points(starGeo,starMat);
+  scene.add(starField);
 
   // Globe group
   globe=new THREE.Group();
   scene.add(globe);
+  countryMeshes=[];
 
-  // Dark base sphere (ocean)
-  const baseMat=new THREE.MeshPhongMaterial({color:0x0a0a14,emissive:0x050510,specular:0x222244,shininess:15,transparent:true,opacity:0.85});
-  const baseSphere=new THREE.Mesh(new THREE.SphereGeometry(0.99,64,64),baseMat);
-  globe.add(baseSphere);
+  // ── EARTH TEXTURES (real coastlines) ──
+  const loader=new THREE.TextureLoader();
+  const maxAniso=Math.min(8,renderer.capabilities.getMaxAnisotropy());
 
-  // ── DOT MATRIX ──
-  // Adapt density to device: fewer dots on mobile for 60fps
-  const isMobile=W<600;
-  const dotStep=isMobile?3.5:2;
-  const landDotSize=isMobile?0.022:0.018;
-  const waterDotSize=isMobile?0.01:0.008;
-  const landPositions=[],landColors=[];
-  const waterPositions=[],waterColors=[];
-  const landColor=new THREE.Color(0.30,0.50,0.85);
-  const waterColor=new THREE.Color(0.10,0.10,0.16);
+  const dayMap=loader.load('assets/textures/earth/earth_atmos_2048.jpg');
+  dayMap.encoding=THREE.sRGBEncoding;dayMap.anisotropy=maxAniso;
+  const normalMap=loader.load('assets/textures/earth/earth_normal_2048.jpg');
+  normalMap.anisotropy=maxAniso;
+  const specMap=loader.load('assets/textures/earth/earth_specular_2048.jpg');
+  specMap.anisotropy=maxAniso;
+  const cloudMap=loader.load('assets/textures/earth/earth_clouds_1024.png');
+  cloudMap.anisotropy=maxAniso;
+  const nightMap=loader.load('assets/textures/earth/earth_lights_2048.png');
+  nightMap.encoding=THREE.sRGBEncoding;nightMap.anisotropy=maxAniso;
 
-  for(let lat=-80;lat<=80;lat+=dotStep){
-    const lonStep=Math.max(dotStep,dotStep/Math.cos(lat*Math.PI/180));
-    for(let lon=-180;lon<180;lon+=lonStep){
-      const pos=latLonToVec3(lat,lon,1.005);
-      if(isLand(lat,lon)){
-        landPositions.push(pos.x,pos.y,pos.z);
-        // Slight color variation for visual richness
-        const vary=0.85+Math.random()*0.3;
-        landColors.push(landColor.r*vary,landColor.g*vary,landColor.b*vary);
-      } else {
-        waterPositions.push(pos.x,pos.y,pos.z);
-        waterColors.push(waterColor.r,waterColor.g,waterColor.b);
-      }
-    }
-  }
+  const earthMat=new THREE.MeshPhongMaterial({
+    map:dayMap,
+    normalMap:normalMap,
+    normalScale:new THREE.Vector2(0.55,0.55),
+    specularMap:specMap,
+    specular:new THREE.Color(0x2b3f66),
+    shininess:20
+  });
+  const earth=new THREE.Mesh(new THREE.SphereGeometry(1,96,96),earthMat);
+  globe.add(earth);
 
-  // Land dots (larger, brighter)
-  const landGeo=new THREE.BufferGeometry();
-  landGeo.setAttribute('position',new THREE.Float32BufferAttribute(landPositions,3));
-  landGeo.setAttribute('color',new THREE.Float32BufferAttribute(landColors,3));
-  const landMat=new THREE.PointsMaterial({size:landDotSize,vertexColors:true,sizeAttenuation:true,transparent:true,opacity:0.9});
-  globe.add(new THREE.Points(landGeo,landMat));
+  // Night lights only on the dark side
+  const nightMat=new THREE.ShaderMaterial({
+    uniforms:{
+      uNightMap:{value:nightMap},
+      uLightDir:{value:new THREE.Vector3(1,0.5,0.8).normalize()},
+      uIntensity:{value:isMobile?0.75:1.0}
+    },
+    vertexShader:`
+      varying vec2 vUv;
+      varying vec3 vNormalWorld;
+      void main(){
+        vUv=uv;
+        vNormalWorld=normalize(mat3(modelMatrix)*normal);
+        gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);
+      }`,
+    fragmentShader:`
+      uniform sampler2D uNightMap;
+      uniform vec3 uLightDir;
+      uniform float uIntensity;
+      varying vec2 vUv;
+      varying vec3 vNormalWorld;
+      void main(){
+        float lit=dot(normalize(vNormalWorld),normalize(uLightDir));
+        float darkness=smoothstep(0.32,-0.18,lit);
+        vec3 lights=texture2D(uNightMap,vUv).rgb*darkness*uIntensity;
+        gl_FragColor=vec4(lights,darkness*0.95);
+      }`,
+    transparent:true,
+    blending:THREE.AdditiveBlending,
+    depthWrite:false
+  });
+  nightLights=new THREE.Mesh(new THREE.SphereGeometry(1.003,96,96),nightMat);
+  globe.add(nightLights);
 
-  // Water dots (smaller, dimmer) — skip on mobile for performance
-  const waterGeo=new THREE.BufferGeometry();
-  waterGeo.setAttribute('position',new THREE.Float32BufferAttribute(waterPositions,3));
-  waterGeo.setAttribute('color',new THREE.Float32BufferAttribute(waterColors,3));
-  const waterMat=new THREE.PointsMaterial({size:waterDotSize,vertexColors:true,sizeAttenuation:true,transparent:true,opacity:isMobile?0.15:0.35});
-  globe.add(new THREE.Points(waterGeo,waterMat));
+  // Cloud shell
+  const cloudMat=new THREE.MeshPhongMaterial({
+    map:cloudMap,
+    alphaMap:cloudMap,
+    transparent:true,
+    opacity:isMobile?0.20:0.28,
+    depthWrite:false
+  });
+  cloudLayer=new THREE.Mesh(new THREE.SphereGeometry(1.018,96,96),cloudMat);
+  globe.add(cloudLayer);
 
   // ── ATMOSPHERE GLOW ──
-  const glowGeo=new THREE.SphereGeometry(1.12,48,48);
+  const glowGeo=new THREE.SphereGeometry(1.12,64,64);
   const glowMat=new THREE.ShaderMaterial({
-    vertexShader:`varying vec3 vNormal;void main(){vNormal=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
-    fragmentShader:`varying vec3 vNormal;void main(){float i=pow(0.6-dot(vNormal,vec3(0,0,1.0)),3.0);gl_FragColor=vec4(0.25,0.42,0.88,1.0)*i*0.6;}`,
-    blending:THREE.AdditiveBlending,side:THREE.BackSide,transparent:true
+    uniforms:{uColor:{value:new THREE.Color(0x67b7ff)},uStrength:{value:0.85}},
+    vertexShader:`
+      varying vec3 vNormalWorld;
+      varying vec3 vWorldPos;
+      void main(){
+        vec4 wPos=modelMatrix*vec4(position,1.0);
+        vWorldPos=wPos.xyz;
+        vNormalWorld=normalize(mat3(modelMatrix)*normal);
+        gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);
+      }`,
+    fragmentShader:`
+      uniform vec3 uColor;
+      uniform float uStrength;
+      varying vec3 vNormalWorld;
+      varying vec3 vWorldPos;
+      void main(){
+        vec3 viewDir=normalize(cameraPosition-vWorldPos);
+        float fresnel=pow(1.0-max(dot(viewDir,vNormalWorld),0.0),4.2);
+        gl_FragColor=vec4(uColor,fresnel*uStrength);
+      }`,
+    blending:THREE.AdditiveBlending,side:THREE.BackSide,transparent:true,depthWrite:false
   });
-  scene.add(new THREE.Mesh(glowGeo,glowMat));
+  atmosphereOuter=new THREE.Mesh(glowGeo,glowMat);
+  scene.add(atmosphereOuter);
 
   // Inner glow
-  const innerGlowGeo=new THREE.SphereGeometry(1.03,48,48);
+  const innerGlowGeo=new THREE.SphereGeometry(1.035,64,64);
   const innerGlowMat=new THREE.ShaderMaterial({
-    vertexShader:`varying vec3 vNormal;void main(){vNormal=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
-    fragmentShader:`varying vec3 vNormal;void main(){float i=pow(0.75-dot(vNormal,vec3(0,0,1.0)),2.0);gl_FragColor=vec4(0.2,0.35,0.8,1.0)*i*0.2;}`,
-    blending:THREE.AdditiveBlending,side:THREE.FrontSide,transparent:true
+    uniforms:{uColor:{value:new THREE.Color(0x8ed4ff)}},
+    vertexShader:`
+      varying vec3 vNormalWorld;
+      varying vec3 vWorldPos;
+      void main(){
+        vec4 wPos=modelMatrix*vec4(position,1.0);
+        vWorldPos=wPos.xyz;
+        vNormalWorld=normalize(mat3(modelMatrix)*normal);
+        gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);
+      }`,
+    fragmentShader:`
+      uniform vec3 uColor;
+      varying vec3 vNormalWorld;
+      varying vec3 vWorldPos;
+      void main(){
+        vec3 viewDir=normalize(cameraPosition-vWorldPos);
+        float fresnel=pow(1.0-max(dot(viewDir,vNormalWorld),0.0),2.2);
+        gl_FragColor=vec4(uColor,fresnel*0.16);
+      }`,
+    blending:THREE.AdditiveBlending,side:THREE.FrontSide,transparent:true,depthWrite:false
   });
-  scene.add(new THREE.Mesh(innerGlowGeo,innerGlowMat));
+  atmosphereInner=new THREE.Mesh(innerGlowGeo,innerGlowMat);
+  scene.add(atmosphereInner);
 
   // ── COUNTRY MARKERS ──
-  // Visible dot + ring for aesthetics, plus an invisible larger hit sphere for mobile tapping
+  // Visible dot + ring, plus invisible larger hit sphere for mobile tapping
   const hitRadius=isMobile?0.06:0.04; // generous tap target
-  const dotRadius=isMobile?0.02:0.015;
-  const ringOuter=isMobile?0.038:0.028;
+  const dotRadius=isMobile?0.016:0.012;
+  const ringOuter=isMobile?0.032:0.024;
   countries.forEach((c,i)=>{
     const pos=latLonToVec3(c.lat,c.lon,1.025);
 
@@ -914,9 +991,9 @@ function initGlobe(){
     globe.add(hitMesh);
     countryMeshes.push(hitMesh);
 
-    // Visible glowing dot
+    // Visible marker dot
     const dotGeo=new THREE.SphereGeometry(dotRadius,16,16);
-    const dotMat=new THREE.MeshBasicMaterial({color:0xf59e0b});
+    const dotMat=new THREE.MeshStandardMaterial({color:0xfde68a,emissive:0xf59e0b,emissiveIntensity:0.7,roughness:0.35,metalness:0.1});
     const dot=new THREE.Mesh(dotGeo,dotMat);
     dot.position.copy(pos);
     dot.userData={index:i,isDot:true};
@@ -924,8 +1001,11 @@ function initGlobe(){
     countryMeshes.push(dot);
 
     // Outer ring
-    const ringGeo=new THREE.RingGeometry(ringOuter-0.008,ringOuter,24);
-    const ringMat=new THREE.MeshBasicMaterial({color:0xf59e0b,transparent:true,opacity:0.4,side:THREE.DoubleSide});
+    const ringGeo=new THREE.RingGeometry(ringOuter-0.006,ringOuter,32);
+    const ringMat=new THREE.MeshBasicMaterial({
+      color:0xfbbf24,transparent:true,opacity:0.34,side:THREE.DoubleSide,
+      blending:THREE.AdditiveBlending,depthWrite:false
+    });
     const ring=new THREE.Mesh(ringGeo,ringMat);
     ring.position.copy(pos);
     ring.lookAt(pos.clone().multiplyScalar(2));
@@ -935,12 +1015,12 @@ function initGlobe(){
   });
 
   // ── LIGHTING ──
-  scene.add(new THREE.AmbientLight(0x404060,0.5));
-  const dir=new THREE.DirectionalLight(0xffffff,0.7);
-  dir.position.set(5,3,5);
-  scene.add(dir);
-  const rim=new THREE.DirectionalLight(0x6366f1,0.25);
-  rim.position.set(-3,-2,4);
+  scene.add(new THREE.HemisphereLight(0x95c9ff,0x081321,0.42));
+  const sun=new THREE.DirectionalLight(0xffffff,1.0);
+  sun.position.set(5,2.5,5);
+  scene.add(sun);
+  const rim=new THREE.DirectionalLight(0x7dd3fc,0.2);
+  rim.position.set(-4,-2,3);
   scene.add(rim);
 
   // ── INTERACTION ──
@@ -1006,19 +1086,32 @@ function initGlobe(){
   // ── ANIMATE ──
   (function animate(){
     requestAnimationFrame(animate);
+    const t=Date.now()*0.001;
+
+    if(starField) starField.rotation.y+=0.00006;
+    if(cloudLayer) cloudLayer.rotation.y+=0.00022;
+
     if(!isDragging){
-      globe.rotation.y+=0.0015;
+      globe.rotation.y+=0.0011;
       if(Math.abs(rotVel.y)>0.0001){globe.rotation.y+=rotVel.y;rotVel.y*=0.96}
       if(Math.abs(rotVel.x)>0.0001){globe.rotation.x+=rotVel.x;rotVel.x*=0.96}
     }
+    if(nightLights){
+      nightLights.material.uniforms.uLightDir.value.copy(sun.position).normalize();
+    }
+    if(atmosphereOuter){
+      atmosphereOuter.material.uniforms.uStrength.value=0.82+Math.sin(t*0.9)*0.05;
+    }
     // Pulse country markers (skip invisible hit targets)
-    const t=Date.now()*0.003;
+    const pulse=t*2.4;
     countryMeshes.forEach((m,i)=>{
       if(m.userData.isHitTarget) return;
       if(m.userData.ring){
-        m.material.opacity=m.userData.baseOpacity*(0.5+Math.sin(t+i)*0.5);
+        m.material.opacity=m.userData.baseOpacity*(0.45+Math.sin(pulse+i)*0.55);
       } else if(m.userData.isDot){
-        m.scale.setScalar(0.85+Math.sin(t+i*0.7)*0.25);
+        const s=0.88+Math.sin(pulse+i*0.7)*0.18;
+        m.scale.setScalar(s);
+        m.material.emissiveIntensity=0.65+Math.sin(pulse+i*0.6)*0.25;
       }
     });
     renderer.render(scene,camera);
