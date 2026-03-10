@@ -897,19 +897,33 @@ function initGlobe(){
   scene.add(new THREE.Mesh(innerGlowGeo,innerGlowMat));
 
   // ── COUNTRY MARKERS ──
+  // Visible dot + ring for aesthetics, plus an invisible larger hit sphere for mobile tapping
+  const hitRadius=isMobile?0.06:0.04; // generous tap target
+  const dotRadius=isMobile?0.02:0.015;
+  const ringOuter=isMobile?0.038:0.028;
   countries.forEach((c,i)=>{
     const pos=latLonToVec3(c.lat,c.lon,1.025);
-    // Glowing dot
-    const dotGeo=new THREE.SphereGeometry(0.015,16,16);
-    const dotMat=new THREE.MeshBasicMaterial({color:0xf59e0b}); // amber
+
+    // Invisible hit target (large sphere for easy tapping)
+    const hitGeo=new THREE.SphereGeometry(hitRadius,12,12);
+    const hitMat=new THREE.MeshBasicMaterial({visible:false});
+    const hitMesh=new THREE.Mesh(hitGeo,hitMat);
+    hitMesh.position.copy(pos);
+    hitMesh.userData={index:i,isHitTarget:true};
+    globe.add(hitMesh);
+    countryMeshes.push(hitMesh);
+
+    // Visible glowing dot
+    const dotGeo=new THREE.SphereGeometry(dotRadius,16,16);
+    const dotMat=new THREE.MeshBasicMaterial({color:0xf59e0b});
     const dot=new THREE.Mesh(dotGeo,dotMat);
     dot.position.copy(pos);
-    dot.userData={index:i};
+    dot.userData={index:i,isDot:true};
     globe.add(dot);
     countryMeshes.push(dot);
 
     // Outer ring
-    const ringGeo=new THREE.RingGeometry(0.02,0.028,24);
+    const ringGeo=new THREE.RingGeometry(ringOuter-0.008,ringOuter,24);
     const ringMat=new THREE.MeshBasicMaterial({color:0xf59e0b,transparent:true,opacity:0.4,side:THREE.DoubleSide});
     const ring=new THREE.Mesh(ringGeo,ringMat);
     ring.position.copy(pos);
@@ -950,16 +964,42 @@ function initGlobe(){
   });
   window.addEventListener('pointerup',()=>{isDragging=false});
 
+  // Mobile: higher drag threshold (fingers move more than cursors)
+  const dragThreshold=isMobile?15:8;
+
   canvas.addEventListener('click',e=>{
-    if(dragDist>8)return; // was a drag, not a click
+    if(dragDist>dragThreshold)return; // was a drag, not a click
     const rect=canvas.getBoundingClientRect();
     mouse.x=((e.clientX-rect.left)/rect.width)*2-1;
     mouse.y=-((e.clientY-rect.top)/rect.height)*2+1;
     raycaster.setFromCamera(mouse,camera);
-    // Only test non-ring meshes
-    const clickable=countryMeshes.filter(m=>!m.userData.ring);
-    const hits=raycaster.intersectObjects(clickable);
-    if(hits.length>0){showCountry(countries[hits[0].object.userData.index])}
+
+    // Test against invisible hit targets (larger spheres)
+    const hitTargets=countryMeshes.filter(m=>m.userData.isHitTarget);
+    const hits=raycaster.intersectObjects(hitTargets);
+    if(hits.length>0){
+      showCountry(countries[hits[0].object.userData.index]);
+      return;
+    }
+
+    // Fallback: find nearest country point within screen-space threshold
+    if(isMobile){
+      let nearest=null,nearestDist=Infinity;
+      const tapThresholdSq=0.015; // in NDC space (~40px on mobile)
+      countries.forEach((c,i)=>{
+        const pos=latLonToVec3(c.lat,c.lon,1.025);
+        const worldPos=pos.clone();
+        globe.localToWorld(worldPos);
+        const projected=worldPos.project(camera);
+        const dx=projected.x-mouse.x,dy=projected.y-mouse.y;
+        const distSq=dx*dx+dy*dy;
+        // Only pick points on the front of the globe
+        if(projected.z<1&&distSq<tapThresholdSq&&distSq<nearestDist){
+          nearestDist=distSq;nearest=i;
+        }
+      });
+      if(nearest!==null) showCountry(countries[nearest]);
+    }
   });
 
   // ── ANIMATE ──
@@ -970,12 +1010,13 @@ function initGlobe(){
       if(Math.abs(rotVel.y)>0.0001){globe.rotation.y+=rotVel.y;rotVel.y*=0.96}
       if(Math.abs(rotVel.x)>0.0001){globe.rotation.x+=rotVel.x;rotVel.x*=0.96}
     }
-    // Pulse country markers
+    // Pulse country markers (skip invisible hit targets)
     const t=Date.now()*0.003;
     countryMeshes.forEach((m,i)=>{
+      if(m.userData.isHitTarget) return;
       if(m.userData.ring){
         m.material.opacity=m.userData.baseOpacity*(0.5+Math.sin(t+i)*0.5);
-      } else {
+      } else if(m.userData.isDot){
         m.scale.setScalar(0.85+Math.sin(t+i*0.7)*0.25);
       }
     });
