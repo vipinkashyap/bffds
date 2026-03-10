@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5">
+<title>First Bites — How the World Feeds Its Babies</title>
+<meta name="description" content="An interactive guide to baby's first foods across 35 countries — backed by WHO, CDC, and AAP guidelines. Explore the globe to discover how every culture transitions babies from milk to solid food.">
+<meta name="theme-color" content="#1d1d1f">
+
+<!-- Open Graph (Facebook, LinkedIn, iMessage) -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="First Bites — How the World Feeds Its Babies">
+<meta property="og:description" content="An interactive globe exploring baby's first foods across 35 countries, backed by WHO, CDC & AAP guidelines.">
+<meta property="og:url" content="https://vipinkashyap.github.io/bffds/">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="First Bites — How the World Feeds Its Babies">
+<meta name="twitter:description" content="An interactive globe exploring baby's first foods across 35 countries, backed by WHO, CDC & AAP guidelines.">
+
+<!-- Favicon (inline SVG emoji) -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍼</text></svg>">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+/* ═══════════════════════════════════════════════
+   RESET & FOUNDATION — Jony Ive Design System
+   ═══════════════════════════════════════════════ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --white:#ffffff;--off-white:#fafafa;--grey-50:#f5f5f7;--grey-100:#e8e8ed;
+  --grey-200:#d2d2d7;--grey-400:#a1a1a6;--grey-600:#6e6e73;--grey-800:#424245;
+  --black:#1d1d1f;
+  --blue:#0071e3;--blue-deep:#0077ed;
+  --radius:20px;--radius-sm:12px;--radius-xs:8px;
+  --ease:cubic-bezier(0.25,0.1,0.25,1);
+  --ease-spring:cubic-bezier(0.34,1.56,0.64,1);
+}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{
+  font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--black);color:var(--white);line-height:1.5;
+  overflow-x:hidden;font-feature-settings:'ss01' on,'ss02' on;
+}
+::selection{background:rgba(0,113,227,0.3)}
+
+/* ═══════════════════════════════════════════════
+   TYPOGRAPHY
+   ═══════════════════════════════════════════════ */
+.t-hero{font-size:clamp(48px,8vw,96px);font-weight:700;letter-spacing:-0.04em;line-height:1.02}
+.t-display{font-size:clamp(32px,5vw,64px);font-weight:700;letter-spacing:-0.035em;line-height:1.08}
+.t-headline{font-size:clamp(24px,3.5vw,40px);font-weight:600;letter-spacing:-0.025em;line-height:1.15}
+.t-title{font-size:20px;font-weight:600;letter-spacing:-0.015em;line-height:1.3}
+.t-body{font-size:17px;font-weight:400;line-height:1.65;color:var(--grey-400)}
+.t-caption{font-size:12px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--grey-600)}
+.t-source{font-size:11px;color:var(--grey-600);font-style:italic}
+
+/* ═══════════════════════════════════════════════
+   LAYOUT
+   ═══════════════════════════════════════════════ */
+.container{max-width:1120px;margin:0 auto;padding:0 24px}
+.section{padding:120px 0;position:relative}
+.section--light{background:var(--white);color:var(--black)}
+.section--light .t-body{color:var(--grey-600)}
+.section--grey{background:var(--grey-50);color:var(--black)}
+.section--grey .t-body{color:var(--grey-600)}
+.text-center{text-align:center}
+.mx-auto{margin-left:auto;margin-right:auto}
+
+/* ═══════════════════════════════════════════════
+   HERO — Full viewport, globe below text
+   ═══════════════════════════════════════════════ */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  padding:80px 24px 40px;position:relative;overflow:hidden;
+}
+.hero-overline{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 16px;border-radius:100px;
+  border:1px solid rgba(255,255,255,0.12);
+  font-size:13px;font-weight:500;color:var(--grey-400);
+  margin-bottom:24px;backdrop-filter:blur(8px);
+  background:rgba(255,255,255,0.04);
+}
+.hero-overline .dot{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.hero h1{max-width:800px}
+.hero h1 .gradient{
+  background:linear-gradient(135deg,#60a5fa,#a78bfa,#f472b6);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-sub{max-width:560px;margin:20px auto 0;font-size:19px;color:var(--grey-400);line-height:1.5;font-weight:400}
+
+/* Globe canvas */
+#globeCanvas{
+  width:100%;max-width:700px;height:clamp(400px,50vw,600px);
+  margin:48px auto 0;cursor:grab;position:relative;z-index:1;
+  touch-action:none;-webkit-touch-callout:none;user-select:none;
+}
+#globeCanvas:active{cursor:grabbing}
+
+.hero-hint{
+  margin-top:16px;font-size:13px;color:var(--grey-600);
+  display:flex;align-items:center;gap:6px;justify-content:center;
+}
+.hero-hint svg{animation:bob 2s ease infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
+.mobile-hint{display:none}
+@media(max-width:768px){.desktop-hint{display:none}.mobile-hint{display:inline}}
+
+/* Country info panel */
+.country-panel{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120%);
+  background:rgba(30,30,32,0.92);backdrop-filter:saturate(180%) blur(40px);
+  -webkit-backdrop-filter:saturate(180%) blur(40px);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:20px;padding:28px 32px;min-width:340px;max-width:480px;
+  z-index:200;transition:transform 0.5s var(--ease);
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+.country-panel.visible{transform:translateX(-50%) translateY(0)}
+.country-panel-close{
+  position:absolute;top:12px;right:12px;width:28px;height:28px;
+  border-radius:50%;border:none;background:rgba(255,255,255,0.08);
+  color:var(--grey-400);cursor:pointer;display:flex;align-items:center;
+  justify-content:center;font-size:14px;transition:background 0.2s;
+}
+.country-panel-close:hover{background:rgba(255,255,255,0.15)}
+.country-flag{font-size:40px;margin-bottom:8px}
+.country-name{font-size:24px;font-weight:700;letter-spacing:-0.02em}
+.country-region{font-size:12px;color:var(--grey-600);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:16px}
+.country-foods{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
+.country-food-item{display:flex;gap:12px;align-items:flex-start}
+.country-food-emoji{font-size:24px;flex-shrink:0;width:32px;text-align:center}
+.country-food-info h4{font-size:15px;font-weight:600;color:var(--white)}
+.country-food-info p{font-size:13px;color:var(--grey-400);line-height:1.5;margin-top:2px}
+.country-ceremony{
+  padding:12px 16px;border-radius:var(--radius-sm);
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);
+  font-size:13px;color:var(--grey-400);line-height:1.55;
+}
+.country-ceremony strong{color:var(--white);font-weight:600}
+
+/* ═══════════════════════════════════════════════
+   WHO / GUIDELINES SECTION
+   ═══════════════════════════════════════════════ */
+.guideline-cards{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:2px;margin-top:48px;border-radius:var(--radius);overflow:hidden;
+}
+.guideline-card{
+  background:var(--white);padding:40px 32px;position:relative;
+  transition:background 0.3s;
+}
+.guideline-card:hover{background:var(--grey-50)}
+.guideline-icon{
+  width:48px;height:48px;border-radius:var(--radius-sm);
+  display:flex;align-items:center;justify-content:center;font-size:24px;
+  margin-bottom:20px;
+}
+.guideline-card h3{font-size:18px;font-weight:600;letter-spacing:-0.01em;margin-bottom:8px;color:var(--black)}
+.guideline-card p{font-size:15px;color:var(--grey-600);line-height:1.6}
+.guideline-card .source-tag{
+  display:inline-block;margin-top:12px;padding:3px 10px;border-radius:100px;
+  font-size:11px;font-weight:600;letter-spacing:0.02em;
+}
+.source-who{background:#e0f2fe;color:#0369a1}
+.source-aap{background:#fef3c7;color:#92400e}
+.source-cdc{background:#e0e7ff;color:#4338ca}
+
+/* ═══════════════════════════════════════════════
+   TIMELINE — Horizontal scroll with stages
+   ═══════════════════════════════════════════════ */
+.timeline-track{
+  display:flex;gap:0;margin-top:48px;overflow-x:auto;
+  scrollbar-width:none;-ms-overflow-style:none;
+  padding-bottom:24px;
+}
+.timeline-track::-webkit-scrollbar{display:none}
+.timeline-stage{
+  flex:0 0 auto;width:280px;padding:32px 28px;
+  border-right:1px solid var(--grey-100);position:relative;
+  transition:background 0.3s;cursor:default;
+}
+.timeline-stage:last-child{border-right:none}
+.timeline-stage:hover{background:var(--grey-50)}
+.timeline-age{
+  font-size:48px;font-weight:800;letter-spacing:-0.04em;
+  background:linear-gradient(135deg,var(--blue),#a78bfa);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  line-height:1;
+}
+.timeline-age span{font-size:18px;font-weight:500;-webkit-text-fill-color:var(--grey-400);letter-spacing:0}
+.timeline-label{font-size:15px;font-weight:600;color:var(--black);margin:12px 0 8px}
+.timeline-foods{list-style:none;display:flex;flex-direction:column;gap:6px}
+.timeline-foods li{font-size:14px;color:var(--grey-600);display:flex;align-items:center;gap:8px}
+.timeline-foods li .food-dot{width:6px;height:6px;border-radius:50%;background:var(--grey-200);flex-shrink:0}
+.timeline-source{margin-top:12px;font-size:11px;color:var(--grey-400);font-style:italic}
+
+/* ═══════════════════════════════════════════════
+   FOOD EXPLORER — Filterable grid
+   ═══════════════════════════════════════════════ */
+.explorer-controls{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:40px;
+}
+.explorer-search{
+  flex:1;min-width:240px;position:relative;
+}
+.explorer-search input{
+  width:100%;padding:14px 20px 14px 48px;border-radius:14px;
+  border:1px solid var(--grey-100);background:var(--white);
+  font-size:16px;font-family:inherit;color:var(--black);
+  transition:all 0.25s;outline:none;
+}
+.explorer-search input:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(0,113,227,0.08)}
+.explorer-search svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--grey-400)}
+.pill-group{display:flex;gap:6px;flex-wrap:wrap}
+.pill{
+  padding:10px 20px;border-radius:100px;border:1.5px solid var(--grey-100);
+  background:var(--white);color:var(--grey-600);font-size:14px;font-weight:500;
+  cursor:pointer;transition:all 0.2s;font-family:inherit;white-space:nowrap;
+}
+.pill:hover{border-color:var(--black);color:var(--black)}
+.pill.active{background:var(--black);color:var(--white);border-color:var(--black)}
+.pill.allergen-active{background:#ef4444;color:var(--white);border-color:#ef4444}
+
+.food-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1px;
+  background:var(--grey-100);border-radius:var(--radius);overflow:hidden;
+}
+.food-card{
+  background:var(--white);padding:28px;cursor:pointer;
+  transition:all 0.3s var(--ease);position:relative;
+}
+.food-card:hover{background:var(--grey-50)}
+.food-card-top{display:flex;align-items:flex-start;gap:16px}
+.food-card-emoji{
+  font-size:32px;width:52px;height:52px;display:flex;
+  align-items:center;justify-content:center;border-radius:14px;
+  background:var(--grey-50);flex-shrink:0;
+}
+.food-card-meta{flex:1;min-width:0}
+.food-card-name{font-size:17px;font-weight:600;letter-spacing:-0.01em;color:var(--black)}
+.food-card-cat{font-size:11px;font-weight:600;color:var(--grey-400);text-transform:uppercase;letter-spacing:0.05em;margin-top:1px}
+.food-card-age{
+  margin-top:6px;display:inline-flex;padding:3px 10px;border-radius:100px;
+  font-size:11px;font-weight:600;color:var(--blue);background:#e0f2fe;
+}
+.food-card-nutrients{display:flex;flex-wrap:wrap;gap:4px;margin-top:14px}
+.nutrient-chip{
+  padding:3px 10px;border-radius:100px;font-size:11px;font-weight:500;
+  background:var(--grey-50);color:var(--grey-600);border:1px solid var(--grey-100);
+}
+.allergen-chip{background:#fef2f2;color:#dc2626;border-color:#fecaca}
+.food-card-prep{font-size:14px;color:var(--grey-600);line-height:1.6;margin-top:12px}
+.food-card-source{font-size:11px;color:var(--grey-400);margin-top:8px;font-style:italic}
+
+/* Expanded state */
+.food-card-detail{
+  max-height:0;overflow:hidden;opacity:0;
+  transition:max-height 0.4s var(--ease),opacity 0.3s,margin 0.3s;
+}
+.food-card.open .food-card-detail{max-height:300px;opacity:1;margin-top:16px}
+.food-detail-box{
+  padding:20px;border-radius:var(--radius-sm);background:var(--grey-50);
+  border:1px solid var(--grey-100);font-size:14px;color:var(--grey-600);line-height:1.65;
+}
+.food-detail-box strong{color:var(--black);font-weight:600}
+
+/* ═══════════════════════════════════════════════
+   ALLERGEN SECTION
+   ═══════════════════════════════════════════════ */
+.allergen-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:12px;margin-top:40px;
+}
+.allergen-card{
+  padding:24px;border-radius:var(--radius);border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.03);text-align:center;
+  transition:all 0.3s;cursor:pointer;
+}
+.allergen-card:hover{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.12);transform:translateY(-2px)}
+.allergen-card-emoji{font-size:36px;margin-bottom:8px}
+.allergen-card-name{font-size:15px;font-weight:600;margin-bottom:4px}
+.allergen-card-count{font-size:12px;color:var(--grey-600)}
+
+/* ═══════════════════════════════════════════════
+   EMPTY STATE
+   ═══════════════════════════════════════════════ */
+.empty{text-align:center;padding:80px 24px}
+.empty-icon{font-size:48px;margin-bottom:16px;opacity:0.4}
+.empty h3{font-size:20px;font-weight:600;color:var(--grey-800);margin-bottom:4px}
+.empty p{font-size:15px;color:var(--grey-400)}
+
+/* ═══════════════════════════════════════════════
+   SOURCES FOOTER
+   ═══════════════════════════════════════════════ */
+.sources-section{
+  padding:80px 0;border-top:1px solid rgba(255,255,255,0.06);
+}
+.sources-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:32px}
+.source-card{
+  padding:24px;border-radius:var(--radius-sm);
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
+  transition:all 0.25s;
+}
+.source-card:hover{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.1)}
+.source-card h4{font-size:14px;font-weight:600;margin-bottom:4px}
+.source-card p{font-size:13px;color:var(--grey-600);line-height:1.5}
+.source-card a{color:var(--blue);text-decoration:none;font-size:13px}
+.source-card a:hover{text-decoration:underline}
+
+footer{
+  text-align:center;padding:48px 24px;font-size:13px;color:var(--grey-600);
+  border-top:1px solid rgba(255,255,255,0.04);
+}
+
+/* ═══════════════════════════════════════════════
+   COUNT + RESULT INDICATOR
+   ═══════════════════════════════════════════════ */
+.result-bar{
+  display:flex;justify-content:space-between;align-items:baseline;
+  margin-bottom:20px;flex-wrap:wrap;gap:8px;
+}
+.result-bar h2{font-size:28px;font-weight:700;letter-spacing:-0.02em;color:var(--black)}
+.result-bar .count{font-size:15px;color:var(--grey-400);font-weight:400}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════ */
+@media(max-width:768px){
+  .section{padding:64px 0}
+  .hero{padding:60px 16px 24px;min-height:auto}
+  .hero h1{font-size:clamp(40px,10vw,56px)}
+  .hero-sub{font-size:16px;margin-top:12px}
+  #globeCanvas{height:clamp(300px,60vw,400px)!important;margin-top:32px}
+  .food-grid{grid-template-columns:1fr}
+  .guideline-cards{grid-template-columns:1fr}
+  .timeline-stage{width:260px;padding:24px 20px}
+  .explorer-controls{gap:8px}
+  .explorer-search{min-width:100%;flex-basis:100%}
+  .explorer-search input{padding:12px 16px 12px 44px;font-size:16px}
+  .pill-group{gap:4px;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+  .pill-group::-webkit-scrollbar{display:none}
+  .pill{padding:8px 14px;font-size:13px;flex-shrink:0}
+  .country-panel{min-width:auto;left:8px;right:8px;bottom:8px;transform:translateX(0) translateY(120%);max-width:none;padding:20px 24px;border-radius:16px}
+  .country-panel.visible{transform:translateX(0) translateY(0)}
+  .country-flag{font-size:32px}
+  .country-name{font-size:20px}
+  .allergen-grid{grid-template-columns:repeat(3,1fr);gap:8px}
+  .allergen-card{padding:16px 12px}
+  .allergen-card-emoji{font-size:28px}
+  .allergen-card-name{font-size:13px}
+  .guideline-card{padding:28px 20px}
+  .sources-grid{grid-template-columns:1fr}
+  .info-grid{grid-template-columns:1fr}
+  .t-display{font-size:clamp(28px,6vw,40px)}
+  .result-bar h2{font-size:22px}
+  .food-card{padding:20px}
+  .food-card-emoji{width:44px;height:44px;font-size:26px}
+  .food-card-nutrients{gap:3px}
+  .nutrient-chip{font-size:10px;padding:2px 8px}
+  .hero-hint{font-size:12px}
+}
+@media(max-width:380px){
+  .hero h1{font-size:36px}
+  .allergen-grid{grid-template-columns:repeat(3,1fr)}
+  .timeline-stage{width:220px}
+  .t-caption{font-size:11px}
+}
+
+/* ═══════════════════════════════════════════════
+   TRANSITIONS & ANIMATIONS
+   ═══════════════════════════════════════════════ */
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn 0.6s var(--ease) both}
+.fade-in-d1{animation-delay:0.1s}.fade-in-d2{animation-delay:0.2s}.fade-in-d3{animation-delay:0.3s}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ HERO + GLOBE ═══════════ -->
+<section class="hero">
+  <div class="hero-overline fade-in"><span class="dot"></span> Data from WHO, CDC &amp; AAP</div>
+  <h1 class="t-hero fade-in fade-in-d1">First <span class="gradient">Bites</span></h1>
+  <p class="hero-sub fade-in fade-in-d2">How every culture on Earth guides babies from milk to their first solid foods — explored through an interactive globe and evidence-based nutrition science.</p>
+  <canvas id="globeCanvas"></canvas>
+  <div class="hero-hint fade-in fade-in-d3">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5l-4 4-4-4"/></svg>
+    <span class="desktop-hint">Drag to explore · Click a point to discover traditions</span>
+    <span class="mobile-hint">Swipe to spin · Tap a point to explore</span>
+  </div>
+</section>
+
+<!-- Country Panel (appears on globe click) -->
+<div class="country-panel" id="countryPanel">
+  <button class="country-panel-close" onclick="closePanel()">✕</button>
+  <div id="countryContent"></div>
+</div>
+
+<!-- ═══════════ WHO / OFFICIAL GUIDELINES ═══════════ -->
+<section class="section section--light">
+  <div class="container">
+    <p class="t-caption fade-in">Evidence-Based Guidelines</p>
+    <h2 class="t-display fade-in" style="margin-top:8px;color:var(--black)">What the science says</h2>
+    <p class="t-body fade-in" style="max-width:600px;margin-top:12px">Global health authorities agree: around 6 months, breast milk alone is no longer enough. Here's the consensus from the three leading bodies.</p>
+    <div class="guideline-cards">
+      <div class="guideline-card">
+        <div class="guideline-icon" style="background:#e0f2fe">🌍</div>
+        <h3>Start at 6 months</h3>
+        <p>Complementary foods should be introduced at 6 months alongside continued breastfeeding. Before this, the infant gut is not mature enough and breast milk meets all nutritional needs.</p>
+        <span class="source-tag source-who">WHO 2023 Guideline</span>
+      </div>
+      <div class="guideline-card">
+        <div class="guideline-icon" style="background:#fef3c7">🍽️</div>
+        <h3>Nutrient-dense first foods</h3>
+        <p>Prioritize meat, poultry, seafood, eggs, legumes, and iron-rich vegetables. Iron stores deplete by ~6 months, with requirements jumping from 0.27 mg/day to 11 mg/day — a 40× increase.</p>
+        <span class="source-tag source-aap">AAP 2024 Recommendation</span>
+      </div>
+      <div class="guideline-card">
+        <div class="guideline-icon" style="background:#e0e7ff">🥜</div>
+        <h3>Introduce allergens early</h3>
+        <p>The LEAP study demonstrated 81% lower peanut allergy rates with early introduction. CDC and AAP now recommend introducing top allergens from around 6 months — not delaying them.</p>
+        <span class="source-tag source-cdc">CDC / AAP Joint Guidance</span>
+      </div>
+      <div class="guideline-card">
+        <div class="guideline-icon" style="background:#fce7f3">📊</div>
+        <h3>Dietary diversity matters</h3>
+        <p>WHO recommends foods from at least 5 of 8 food groups daily by 12 months: grains, legumes, dairy, flesh foods, eggs, vitamin-A rich fruits/veg, other fruits/veg, and nuts/seeds.</p>
+        <span class="source-tag source-who">WHO 2023 Guideline</span>
+      </div>
+      <div class="guideline-card">
+        <div class="guideline-icon" style="background:#dcfce7">🧪</div>
+        <h3>One new food at a time</h3>
+        <p>Introduce single-ingredient foods and wait 3–5 days between new allergens to identify reactions. By 7–8 months, babies can eat foods from all food groups.</p>
+        <span class="source-tag source-cdc">CDC Infant Nutrition</span>
+      </div>
+      <div class="guideline-card">
+        <div class="guideline-icon" style="background:#fef9c3">⚠️</div>
+        <h3>Key foods to avoid</h3>
+        <p>No honey before 12 months (botulism risk). No cow's milk as a drink before 12 months. No juice before 12 months. Limit rice cereal due to arsenic. No added salt or sugar.</p>
+        <span class="source-tag source-aap">AAP / CDC Safety</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ FEEDING TIMELINE ═══════════ -->
+<section class="section section--grey">
+  <div class="container">
+    <p class="t-caption">The Journey</p>
+    <h2 class="t-display" style="margin-top:8px;color:var(--black)">Month by month</h2>
+    <p class="t-body" style="max-width:560px;margin-top:12px">A stage-by-stage guide to what and how to introduce, based on CDC and AAP developmental milestones.</p>
+  </div>
+  <div class="timeline-track" style="padding-left:max(24px,calc((100vw - 1120px)/2))">
+    <div class="timeline-stage">
+      <div class="timeline-age">4–6<span> mo</span></div>
+      <div class="timeline-label">First Tastes</div>
+      <ul class="timeline-foods">
+        <li><span class="food-dot" style="background:#34d399"></span>Iron-fortified single-grain cereal (oat preferred over rice)</li>
+        <li><span class="food-dot" style="background:#34d399"></span>Pureed sweet potato, butternut squash, carrot</li>
+        <li><span class="food-dot" style="background:#34d399"></span>Mashed avocado, banana, pear</li>
+        <li><span class="food-dot" style="background:#34d399"></span>Pureed peas, zucchini</li>
+        <li><span class="food-dot" style="background:#34d399"></span>Thin peanut butter mixed into puree (LEAP study)</li>
+      </ul>
+      <div class="timeline-source">CDC — Introducing Solid Foods; AAP Infant Feeding</div>
+    </div>
+    <div class="timeline-stage">
+      <div class="timeline-age">6–8<span> mo</span></div>
+      <div class="timeline-label">Expanding Variety</div>
+      <ul class="timeline-foods">
+        <li><span class="food-dot" style="background:#60a5fa"></span>Pureed meats: chicken, beef, lamb (best heme iron)</li>
+        <li><span class="food-dot" style="background:#60a5fa"></span>Scrambled egg, tofu, lentils</li>
+        <li><span class="food-dot" style="background:#60a5fa"></span>Plain full-fat yogurt, soft cheese</li>
+        <li><span class="food-dot" style="background:#60a5fa"></span>Cooked salmon, cod (DHA for brain development)</li>
+        <li><span class="food-dot" style="background:#60a5fa"></span>Introduce top allergens: egg, dairy, wheat, soy, sesame, tree nuts, fish</li>
+      </ul>
+      <div class="timeline-source">AAP — Nutrient-Dense Complementary Foods; WHO Dietary Diversity</div>
+    </div>
+    <div class="timeline-stage">
+      <div class="timeline-age">8–10<span> mo</span></div>
+      <div class="timeline-label">Textures &amp; Finger Foods</div>
+      <ul class="timeline-foods">
+        <li><span class="food-dot" style="background:#a78bfa"></span>Soft cubes: sweet potato, potato, beet</li>
+        <li><span class="food-dot" style="background:#a78bfa"></span>Shredded chicken, flaked fish, mini meatballs</li>
+        <li><span class="food-dot" style="background:#a78bfa"></span>Quartered blueberries, soft raspberries</li>
+        <li><span class="food-dot" style="background:#a78bfa"></span>Well-cooked pasta, soft bread strips</li>
+        <li><span class="food-dot" style="background:#a78bfa"></span>Mashed chickpeas, black beans</li>
+        <li><span class="food-dot" style="background:#a78bfa"></span>Quartered grapes (never whole — choking hazard)</li>
+      </ul>
+      <div class="timeline-source">CDC — Fingers, Spoons, Forks and Cups; AAP Developmental Milestones</div>
+    </div>
+    <div class="timeline-stage">
+      <div class="timeline-age">10–12<span> mo</span></div>
+      <div class="timeline-label">Family Foods</div>
+      <ul class="timeline-foods">
+        <li><span class="food-dot" style="background:#f472b6"></span>3 meals + 2 snacks daily</li>
+        <li><span class="food-dot" style="background:#f472b6"></span>Most family foods cut to safe sizes</li>
+        <li><span class="food-dot" style="background:#f472b6"></span>Soft raw fruits: ripe pear, banana, kiwi</li>
+        <li><span class="food-dot" style="background:#f472b6"></span>Whole milk and honey OK after 12 months</li>
+        <li><span class="food-dot" style="background:#f472b6"></span>Herbs and mild spices encouraged for palate diversity</li>
+      </ul>
+      <div class="timeline-source">CDC — How Much and How Often to Feed; WHO Meal Frequency Guidance</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ ALLERGEN TRACKER ═══════════ -->
+<section class="section" style="padding-bottom:80px">
+  <div class="container">
+    <p class="t-caption">Top 9 Allergens</p>
+    <h2 class="t-display" style="margin-top:8px">Know the allergens</h2>
+    <p class="t-body" style="max-width:560px;margin-top:12px">The FDA recognizes 9 major food allergens. Current AAP guidance recommends introducing these early — around 6 months — rather than delaying. Click any allergen to filter the food explorer below.</p>
+    <div class="allergen-grid" id="allergenGrid"></div>
+  </div>
+</section>
+
+<!-- ═══════════ FOOD EXPLORER ═══════════ -->
+<section class="section section--light" id="explorerSection">
+  <div class="container">
+    <p class="t-caption">Food Explorer</p>
+    <h2 class="t-display" style="margin-top:8px;color:var(--black)">Every first food, explored</h2>
+    <p class="t-body" style="max-width:560px;margin-top:12px;margin-bottom:40px">A comprehensive database of foods commonly introduced to babies, with preparation guidance and nutrition data sourced from CDC, AAP, and WHO guidelines.</p>
+
+    <div class="explorer-controls">
+      <div class="explorer-search">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><path d="m14 14-3.5-3.5"/></svg>
+        <input type="text" id="searchInput" placeholder="Search by name, nutrient, or category…" autocomplete="off">
+      </div>
+      <div class="pill-group" id="agePills"></div>
+    </div>
+    <div class="pill-group" id="catPills" style="margin-bottom:24px"></div>
+
+    <div class="result-bar">
+      <h2 id="explorerTitle">All Foods</h2>
+      <span class="count" id="explorerCount"></span>
+    </div>
+
+    <div class="food-grid" id="foodGrid"></div>
+    <div class="empty" id="emptyState" style="display:none">
+      <div class="empty-icon">🔍</div>
+      <h3>No foods match</h3>
+      <p>Try adjusting your filters or search terms.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SOURCES ═══════════ -->
+<section class="sources-section">
+  <div class="container">
+    <p class="t-caption">Sources &amp; References</p>
+    <h2 class="t-headline" style="margin-top:8px">Built on evidence</h2>
+    <p class="t-body" style="max-width:500px;margin-top:8px">All food recommendations, timelines, and safety guidance in this app are sourced from the following authorities.</p>
+    <div class="sources-grid">
+      <div class="source-card">
+        <h4>World Health Organization</h4>
+        <p>Guideline for Complementary Feeding of Infants and Young Children 6–23 Months of Age (2023)</p>
+        <a href="https://www.who.int/publications/i/item/9789240081864" target="_blank" rel="noopener">who.int →</a>
+      </div>
+      <div class="source-card">
+        <h4>Centers for Disease Control</h4>
+        <p>Infant and Toddler Nutrition — When, What, and How to Introduce Solid Foods (2024)</p>
+        <a href="https://www.cdc.gov/infant-toddler-nutrition/foods-and-drinks/when-what-and-how-to-introduce-solid-foods.html" target="_blank" rel="noopener">cdc.gov →</a>
+      </div>
+      <div class="source-card">
+        <h4>American Academy of Pediatrics</h4>
+        <p>Infant Food and Feeding Guidelines — Healthy Active Living for Families (2024)</p>
+        <a href="https://www.aap.org/en/patient-care/healthy-active-living-for-families/infant-food-and-feeding/" target="_blank" rel="noopener">aap.org →</a>
+      </div>
+      <div class="source-card">
+        <h4>LEAP Study (New England Journal of Medicine)</h4>
+        <p>Randomized Trial of Peanut Consumption in Infants at Risk for Peanut Allergy — demonstrated 81% reduction in peanut allergy.</p>
+        <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa1414850" target="_blank" rel="noopener">nejm.org →</a>
+      </div>
+      <div class="source-card">
+        <h4>CDC Early Childhood Nutrition Report</h4>
+        <p>National Report on Early Childhood Nutrition (2025)</p>
+        <a href="https://www.cdc.gov/nutrition/media/pdfs/2025/CDC-Early-Childhood-Nutrition-Report-National-2025-508.pdf" target="_blank" rel="noopener">cdc.gov →</a>
+      </div>
+      <div class="source-card">
+        <h4>Dietary Guidelines for Americans</h4>
+        <p>Includes AAP recommendations on breastfeeding and complementary feeding (2025 edition)</p>
+        <a href="https://publications.aap.org/aapnews/news/34132" target="_blank" rel="noopener">publications.aap.org →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p style="margin-bottom:6px">First Bites — An interactive guide to how the world feeds its babies.</p>
+  <p>Always consult your pediatrician before introducing new foods. Every baby is unique.</p>
+</footer>
+
+<!-- ═══════════════════════════════════════════════
+     THREE.JS GLOBE + APP LOGIC
+     ═══════════════════════════════════════════════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ═══════════════════════════════════════════════
+// CONTINENT GEOMETRY — simplified coastline polygons [lon, lat]
+// Used to generate dot-matrix globe texture
+// ═══════════════════════════════════════════════
+const LAND_POLYS=[
+  // North America (mainland)
+  [[-130,55],[-125,60],[-125,65],[-140,62],[-165,64],[-168,66],[-165,70],[-155,72],[-130,73],[-120,75],[-100,76],[-85,77],[-75,73],[-60,70],[-55,52],[-60,47],[-67,44],[-70,42],[-75,36],[-80,25],[-82,22],[-83,10],[-90,16],[-97,16],[-105,20],[-110,24],[-118,33],[-122,38],[-125,48],[-130,55]],
+  // Central America
+  [[-83,10],[-84,11],[-86,13],[-88,16],[-90,22],[-97,16],[-83,10]],
+  // South America
+  [[-80,10],[-76,8],[-70,12],[-62,11],[-60,7],[-52,4],[-50,0],[-45,-2],[-40,-3],[-37,-5],[-35,-10],[-35,-18],[-38,-15],[-40,-22],[-48,-28],[-50,-30],[-52,-33],[-55,-35],[-57,-38],[-62,-40],[-65,-42],[-66,-45],[-68,-48],[-70,-52],[-74,-52],[-74,-45],[-72,-38],[-71,-30],[-70,-18],[-76,-5],[-77,0],[-80,5],[-80,10]],
+  // Europe
+  [[-10,36],[-9,38],[-8,42],[0,43],[3,43],[5,44],[2,49],[3,51],[-5,54],[-5,58],[-3,58],[0,51],[5,52],[5,55],[8,55],[8,58],[12,56],[12,58],[15,58],[18,57],[14,65],[18,69],[25,71],[30,70],[32,66],[28,60],[30,60],[28,55],[23,55],[24,52],[24,47],[26,45],[29,44],[26,42],[24,38],[23,36],[15,38],[13,38],[10,44],[7,44],[5,44],[3,43],[0,43],[-2,36],[-5,36],[-10,36]],
+  // Africa
+  [[-17,15],[-17,21],[-13,28],[-5,34],[0,36],[10,37],[12,33],[18,33],[25,33],[32,32],[33,30],[35,28],[37,20],[42,12],[43,11],[50,12],[51,8],[47,2],[42,0],[40,-3],[40,-10],[38,-15],[36,-22],[33,-27],[28,-33],[26,-34],[20,-35],[18,-34],[16,-29],[12,-18],[9,-5],[5,5],[2,6],[-1,5],[-5,5],[-8,5],[-12,5],[-15,11],[-17,15]],
+  // Asia (mainland)
+  [[32,66],[35,70],[40,68],[50,68],[55,72],[65,73],[70,73],[80,72],[90,73],[100,72],[115,75],[130,73],[140,62],[142,55],[145,50],[150,48],[144,45],[135,42],[130,35],[127,35],[125,33],[120,30],[122,23],[110,20],[108,16],[105,15],[100,14],[100,10],[103,2],[104,1],[95,-5],[95,5],[80,7],[78,8],[75,12],[72,20],[68,24],[62,25],[57,24],[53,24],[48,30],[45,34],[40,38],[40,42],[42,45],[45,40],[50,37],[52,40],[48,42],[50,45],[55,45],[55,52],[60,55],[50,55],[42,55],[35,55],[32,66]],
+  // India subcontinent
+  [[68,24],[72,20],[75,15],[77,12],[78,8],[80,10],[80,14],[82,16],[85,22],[88,22],[89,24],[92,22],[90,20],[85,15],[80,8],[78,8],[77,12],[75,15],[72,20],[68,24]],
+  // Japan
+  [[130,31],[131,34],[135,35],[137,37],[140,40],[140,42],[142,43],[145,44],[142,46],[141,43],[140,40],[137,37],[135,35],[131,34],[130,31]],
+  // UK + Ireland
+  [[-10,51],[-6,51],[-5,54],[-3,56],[-5,58],[-2,58],[0,51],[2,51],[2,53],[-1,55],[-2,57],[-1,59],[-4,58],[-5,57],[-6,55],[-8,52],[-10,51]],
+  // Australia
+  [[114,-26],[115,-22],[118,-20],[122,-18],[128,-15],[131,-12],[136,-12],[138,-16],[138,-12],[140,-11],[142,-11],[145,-15],[146,-19],[150,-24],[153,-27],[152,-33],[150,-38],[146,-39],[142,-38],[138,-36],[136,-35],[132,-32],[128,-32],[123,-34],[116,-34],[114,-31],[114,-26]],
+  // New Zealand
+  [[166,-46],[168,-44],[172,-42],[175,-37],[178,-37],[177,-41],[174,-42],[170,-43],[170,-46],[166,-46]],
+  // Indonesia (simplified)
+  [[95,-6],[98,-2],[104,0],[106,-6],[108,-7],[112,-7],[114,-8],[116,-8],[118,-9],[120,-10],[120,-8],[124,-8],[126,-5],[128,-3],[128,-6],[131,-7],[131,-4],[134,-2],[134,-5],[136,-7],[136,-3],[141,-3],[141,-8],[134,-8],[127,-8],[120,-10],[115,-8],[110,-8],[105,-7],[100,-5],[95,-6]],
+  // Philippines (simplified)
+  [[117,7],[118,10],[120,13],[121,16],[123,18],[122,14],[124,12],[126,8],[124,7],[121,6],[119,5],[117,7]],
+  // Madagascar
+  [[44,-13],[46,-16],[48,-20],[49,-24],[47,-25],[44,-24],[43,-18],[44,-13]],
+  // Scandinavia (separate for better detail)
+  [[5,58],[8,58],[12,58],[15,58],[18,60],[18,64],[14,65],[15,69],[18,70],[25,71],[30,70],[28,65],[22,60],[18,57],[15,58],[12,56],[8,55],[5,55],[5,58]],
+  // Arabian Peninsula
+  [[35,28],[37,20],[42,16],[43,12],[45,13],[48,16],[52,17],[56,17],[56,24],[55,26],[52,24],[50,27],[48,30],[45,34],[40,38],[36,34],[35,28]],
+  // Korean Peninsula
+  [[125,33],[126,35],[127,38],[129,38],[130,36],[129,35],[128,34],[127,33],[125,33]],
+  // Sri Lanka
+  [[80,6],[81,7],[82,8],[82,6],[80,6]],
+  // Taiwan
+  [[120,22],[121,23],[122,25],[121,25],[120,22]],
+  // Iceland
+  [[-24,64],[-22,66],[-18,66],[-14,65],[-14,64],[-18,63],[-22,63],[-24,64]],
+  // Greenland
+  [[-55,60],[-50,62],[-45,61],[-42,65],[-35,70],[-22,73],[-18,77],[-20,80],[-30,82],[-42,84],[-50,82],[-55,78],[-52,72],[-45,67],[-50,63],[-55,60]],
+];
+
+// ═══════════════════════════════════════════════
+// COMPREHENSIVE FOOD DATABASE
+// Source annotations: WHO = WHO 2023 Guideline, CDC = CDC Infant Nutrition, AAP = AAP Infant Feeding
+// ═══════════════════════════════════════════════
+const foods=[
+  // ── FRUITS ──
+  {name:"Avocado",emoji:"🥑",cat:"Fruit",age:4,allergens:[],nutrients:["Healthy Fats","Potassium","Folate","Fiber"],prep:"Mash ripe avocado until smooth. For 8mo+, cut into thin strips. No cooking needed.",detail:"Rich in monounsaturated fats essential for brain development. Can be thinned with breast milk for younger babies.",source:"CDC — First Foods"},
+  {name:"Banana",emoji:"🍌",cat:"Fruit",age:4,allergens:[],nutrients:["Potassium","Vitamin B6","Fiber"],prep:"Mash ripe banana with a fork. For 8mo+, cut into spears. Overripe is easiest to digest.",detail:"Universal first food worldwide. Can be frozen for teething relief. Naturally sweet and gentle on digestion.",source:"CDC — First Foods"},
+  {name:"Apple",emoji:"🍎",cat:"Fruit",age:4,allergens:[],nutrients:["Fiber","Vitamin C","Antioxidants"],prep:"Peel, core, and steam until very soft (8-10 min). Puree for young babies. Never serve raw until 12mo+.",detail:"Steaming preserves more nutrients than boiling. Pairs well with cinnamon after 6 months.",source:"CDC — Fruits and Vegetables"},
+  {name:"Pear",emoji:"🍐",cat:"Fruit",age:4,allergens:[],nutrients:["Fiber","Vitamin C","Vitamin K"],prep:"Peel and steam until tender, then puree. Ripe pears can be mashed raw. Very gentle on tummies.",detail:"One of the least allergenic fruits. Naturally helps with constipation due to sorbitol content.",source:"CDC — Fruits and Vegetables"},
+  {name:"Prune",emoji:"🟤",cat:"Fruit",age:4,allergens:[],nutrients:["Fiber","Vitamin K","Iron","Potassium"],prep:"Puree with water for smooth consistency. Mix into oatmeal. Nature's remedy for constipation.",detail:"Very high in fiber and sorbitol. Start with 1-2 tbsp and adjust. A little goes a long way.",source:"AAP — Infant Feeding"},
+  {name:"Peach",emoji:"🍑",cat:"Fruit",age:4,allergens:[],nutrients:["Vitamin C","Vitamin A","Potassium"],prep:"Use ripe peaches — peel, pit, and puree. Steam if not fully ripe. Frozen peaches work well.",detail:"Gentle on baby's digestive system. Mix with yogurt for 6mo+.",source:"CDC — Fruits and Vegetables"},
+  {name:"Mango",emoji:"🥭",cat:"Fruit",age:6,allergens:[],nutrients:["Vitamin C","Vitamin A","Folate"],prep:"Peel and puree ripe flesh. For 8mo+, cut into strips — roll in baby cereal for grip.",detail:"Extremely nutrient-dense tropical fruit. High in beta-carotene for eye development.",source:"CDC — Fruits and Vegetables"},
+  {name:"Blueberries",emoji:"🫐",cat:"Fruit",age:6,allergens:[],nutrients:["Antioxidants","Vitamin C","Vitamin K"],prep:"Smash or flatten for 6-9mo — never serve whole. Quarter for 9mo+. Mix into oatmeal or yogurt.",detail:"Among the highest antioxidant foods available. Supports brain development. Stains everything.",source:"CDC — Choking Prevention"},
+  {name:"Strawberry",emoji:"🍓",cat:"Fruit",age:6,allergens:[],nutrients:["Vitamin C","Manganese","Folate"],prep:"Cut into thin slices or mash. For 8mo+, quarter large berries.",detail:"Very high Vitamin C — helps iron absorption when paired with iron-rich foods. May cause harmless contact rash.",source:"AAP — Allergenic Foods Introduction"},
+  {name:"Watermelon",emoji:"🍉",cat:"Fruit",age:6,allergens:[],nutrients:["Vitamin C","Lycopene","Hydration"],prep:"Remove all seeds and rind. Mash or cut into thin strips. Naturally hydrating.",detail:"Great for teething when slightly chilled. Very low allergen risk.",source:"CDC — Fruits and Vegetables"},
+  {name:"Cantaloupe",emoji:"🍈",cat:"Fruit",age:6,allergens:[],nutrients:["Vitamin A","Vitamin C","Potassium"],prep:"Remove rind and seeds. Cut into thin strips or small cubes for 6mo+.",detail:"Excellent source of beta-carotene. Naturally sweet and hydrating.",source:"CDC — Fruits and Vegetables"},
+  {name:"Papaya",emoji:"🧡",cat:"Fruit",age:6,allergens:[],nutrients:["Vitamin C","Vitamin A","Digestive Enzymes"],prep:"Scoop seeds, peel, mash ripe papaya. Contains natural digestive enzymes (papain).",detail:"Papain enzyme aids digestion. Very soft when ripe — minimal prep needed. Rich in folate.",source:"WHO — Dietary Diversity"},
+  {name:"Kiwi",emoji:"🥝",cat:"Fruit",age:8,allergens:[],nutrients:["Vitamin C","Vitamin K","Fiber"],prep:"Peel and mash or slice thin. Can be tart — mix with banana if baby finds it sour.",detail:"More Vitamin C per serving than oranges. Tiny seeds are safe to eat.",source:"CDC — Fruits and Vegetables"},
+  {name:"Raspberries",emoji:"🫐",cat:"Fruit",age:8,allergens:[],nutrients:["Fiber","Vitamin C","Manganese"],prep:"Mash or cut in half. Soft enough for early eaters. Great finger food for pincer grasp at 9mo+.",detail:"Very high fiber content. Easily mashed with a fork.",source:"CDC — Finger Foods"},
+  {name:"Grapes",emoji:"🍇",cat:"Fruit",age:8,allergens:[],nutrients:["Vitamin C","Vitamin K","Potassium"],prep:"ALWAYS cut lengthwise into quarters — never serve whole. One of the top choking hazards for infants.",detail:"Whole grapes are a leading choking hazard. Always quarter lengthwise, never in rounds.",source:"CDC — Choking Prevention"},
+  {name:"Dates",emoji:"🟤",cat:"Fruit",age:8,allergens:[],nutrients:["Fiber","Potassium","Iron","Magnesium"],prep:"Soak pitted dates, puree. Never serve whole. Mix into oatmeal as natural sweetener.",detail:"Popular in Middle Eastern baby food traditions. Must be pitted and pureed thoroughly.",source:"WHO — Complementary Feeding"},
+
+  // ── VEGETABLES ──
+  {name:"Sweet Potato",emoji:"🍠",cat:"Vegetable",age:4,allergens:[],nutrients:["Vitamin A","Fiber","Potassium"],prep:"Bake at 400°F for 45 min or steam cubed for 15 min. Mash with breast milk or formula.",detail:"Rich orange color = high beta-carotene. One of the most popular first foods globally. Used as a first food in Kenya where Vitamin A deficiency is common.",source:"CDC — First Foods; WHO Regional Guidance"},
+  {name:"Butternut Squash",emoji:"🎃",cat:"Vegetable",age:4,allergens:[],nutrients:["Vitamin A","Vitamin C","Potassium"],prep:"Peel, cube, and steam 15 min or roast 25 min at 400°F. Naturally sweet and creamy.",detail:"Excellent first vegetable due to natural sweetness. Easy to batch-cook and freeze.",source:"CDC — First Foods"},
+  {name:"Carrot",emoji:"🥕",cat:"Vegetable",age:4,allergens:[],nutrients:["Vitamin A","Fiber","Vitamin K"],prep:"Peel and steam until very soft (15-20 min). Puree. For 8mo+, serve as soft sticks. Never raw.",detail:"Rich in beta-carotene. Steam rather than boil to retain nutrients.",source:"CDC — First Foods"},
+  {name:"Pumpkin",emoji:"🎃",cat:"Vegetable",age:4,allergens:[],nutrients:["Vitamin A","Vitamin C","Potassium"],prep:"Use sugar pumpkin or canned pure pumpkin (not pie filling). Steam or roast until soft.",detail:"Canned pure pumpkin is convenient and equally nutritious. Very gentle on stomach.",source:"CDC — Fruits and Vegetables"},
+  {name:"Green Peas",emoji:"🟢",cat:"Vegetable",age:4,allergens:[],nutrients:["Protein","Iron","Fiber","Vitamin K"],prep:"Steam until soft. Puree and strain skins for 4-6mo. Mash for 8mo+.",detail:"Surprisingly high in protein for a vegetable. Frozen peas retain excellent nutrition.",source:"CDC — First Foods"},
+  {name:"Zucchini",emoji:"🥒",cat:"Vegetable",age:4,allergens:[],nutrients:["Vitamin C","Potassium","Manganese"],prep:"Peel (optional), slice, steam until tender. Puree for young babies.",detail:"Very mild flavor — great veggie starter. Low allergen risk. Blends well with other vegetables.",source:"CDC — Fruits and Vegetables"},
+  {name:"Broccoli",emoji:"🥦",cat:"Vegetable",age:6,allergens:[],nutrients:["Vitamin C","Vitamin K","Folate","Iron"],prep:"Steam florets until very soft (8-10 min). The stem makes a natural handle for self-feeding at 8mo+.",detail:"The tree-like shape makes it fun for self-feeding. May cause gas — introduce gradually.",source:"AAP — Dietary Diversity"},
+  {name:"Cauliflower",emoji:"🤍",cat:"Vegetable",age:6,allergens:[],nutrients:["Vitamin C","Vitamin K","Folate"],prep:"Steam florets until very tender. Puree to potato-like consistency. Mild and versatile.",detail:"Can be pureed silky smooth. Great carrier for other flavors.",source:"CDC — Fruits and Vegetables"},
+  {name:"Spinach",emoji:"🥬",cat:"Vegetable",age:6,allergens:[],nutrients:["Iron","Vitamin K","Vitamin A","Folate"],prep:"Wilt fresh spinach and puree, or blend into other purees. Pair with Vitamin C for iron absorption.",detail:"High in non-heme iron. Baby spinach has milder flavor. Great mixed into scrambled eggs at 8mo+.",source:"AAP — Iron-Rich Foods"},
+  {name:"Green Beans",emoji:"🫛",cat:"Vegetable",age:6,allergens:[],nutrients:["Vitamin K","Vitamin C","Fiber"],prep:"Steam until very soft. Serve whole steamed beans as finger food at 8mo+ — perfect gripping shape.",detail:"Great shape for baby-led weaning. Steam until easily mashed between fingers.",source:"CDC — Finger Foods"},
+  {name:"Potato",emoji:"🥔",cat:"Vegetable",age:6,allergens:[],nutrients:["Potassium","Vitamin C","Vitamin B6"],prep:"Peel, cube, boil or steam until very soft. Mash with breast milk. Soft cubes for 8mo+.",detail:"Versatile base for many meals. Used as a first food in German tradition (meat-veggie-potato puree).",source:"CDC — First Foods; German Pediatric Guidelines"},
+  {name:"Bell Pepper",emoji:"🫑",cat:"Vegetable",age:6,allergens:[],nutrients:["Vitamin C","Vitamin A","Folate"],prep:"Roast or steam until very soft, remove skin. Red/yellow are sweeter than green.",detail:"One red pepper has 3× more Vitamin C than an orange. Great for iron absorption.",source:"CDC — Fruits and Vegetables"},
+  {name:"Beet",emoji:"🔴",cat:"Vegetable",age:6,allergens:[],nutrients:["Folate","Iron","Fiber","Manganese"],prep:"Roast wrapped in foil until tender (45 min). Peel and puree. Will stain everything!",detail:"Naturally sweet when roasted. Will turn stool reddish — this is normal and harmless.",source:"CDC — Fruits and Vegetables"},
+  {name:"Asparagus",emoji:"🌿",cat:"Vegetable",age:6,allergens:[],nutrients:["Folate","Vitamin K","Vitamin C"],prep:"Steam spears until very soft. Natural handle shape for self-feeding at 8mo+.",detail:"High in folate for growth. Choose thin spears for faster cooking.",source:"AAP — Dietary Diversity"},
+  {name:"Parsnip",emoji:"🥕",cat:"Vegetable",age:6,allergens:[],nutrients:["Fiber","Folate","Vitamin C"],prep:"Peel, cube, and roast or steam until very soft. Naturally sweet, similar to carrots.",detail:"Underrated first food. Great mixed with apple or pear. Roasting concentrates sweetness.",source:"CDC — Fruits and Vegetables"},
+  {name:"Corn",emoji:"🌽",cat:"Vegetable",age:8,allergens:[],nutrients:["Fiber","B Vitamins","Thiamine"],prep:"Cook until very soft, puree or mash well. Smash individual kernels — can be a choking risk.",detail:"Kernel skins can be hard to digest for younger babies. Puree thoroughly early on.",source:"CDC — Finger Foods"},
+  {name:"Mushroom",emoji:"🍄",cat:"Vegetable",age:8,allergens:[],nutrients:["Vitamin D","B Vitamins","Selenium"],prep:"Always cook thoroughly — never raw. Sauté until very soft, finely chop.",detail:"One of the few food sources of Vitamin D. Start with mild varieties like white button.",source:"AAP — Vitamin D Sources"},
+  {name:"Eggplant",emoji:"🍆",cat:"Vegetable",age:8,allergens:[],nutrients:["Fiber","Manganese","Folate"],prep:"Peel, cube, and roast or sauté until very soft and creamy.",detail:"Becomes very creamy when fully cooked. Pairs well with tahini for older babies.",source:"WHO — Dietary Diversity"},
+
+  // ── GRAINS ──
+  {name:"Oat Cereal",emoji:"🥣",cat:"Grain",age:4,allergens:["Wheat (Gluten)"],nutrients:["Iron","Fiber","Zinc","B Vitamins"],prep:"Cook iron-fortified baby oat cereal with breast milk or formula. Start thin, gradually thicken.",detail:"AAP recommends oat over rice cereal as first grain due to lower arsenic risk. Iron-fortified versions provide needed iron. May contain trace gluten from processing.",source:"AAP — Iron Fortification; CDC — Cereal Guidance"},
+  {name:"Rice Cereal",emoji:"🍚",cat:"Grain",age:4,allergens:[],nutrients:["Iron","B Vitamins","Carbohydrates"],prep:"Mix iron-fortified rice cereal with breast milk. Use sparingly — vary grains to limit arsenic exposure.",detail:"AAP recommends NOT relying solely on rice cereal due to arsenic content. Alternate with oat and barley.",source:"AAP — Arsenic in Rice; CDC — Cereal Guidance"},
+  {name:"Barley",emoji:"🌾",cat:"Grain",age:6,allergens:["Wheat (Gluten)"],nutrients:["Fiber","Iron","Selenium"],prep:"Cook until very soft and puree. Iron-fortified barley cereal widely available. Higher fiber than rice.",detail:"Lower arsenic risk than rice. High in soluble fiber. Great porridge consistency.",source:"CDC — Varying Grains"},
+  {name:"Quinoa",emoji:"🌾",cat:"Grain",age:6,allergens:[],nutrients:["Complete Protein","Iron","Fiber","Magnesium"],prep:"Rinse well and cook until very soft. Puree for 6mo or mash for 8mo+.",detail:"One of the few plant-based complete proteins. Rinse to remove bitter saponin coating.",source:"WHO — Dietary Diversity"},
+  {name:"Millet",emoji:"🌾",cat:"Grain",age:6,allergens:[],nutrients:["Iron","Magnesium","B Vitamins"],prep:"Cook until very soft porridge-like consistency. Naturally gluten-free. Mild, slightly sweet.",detail:"Ancient grain used as baby food in many African cultures. Easy to digest.",source:"WHO — Complementary Feeding"},
+  {name:"Bread",emoji:"🍞",cat:"Grain",age:6,allergens:["Wheat (Gluten)"],nutrients:["Iron","B Vitamins","Fiber"],prep:"Lightly toast and cut into finger-length strips. Thin-sliced bread is easier. Spread with nut butter for 6mo+.",detail:"Toasting makes it easier to hold and less gummy. Choose whole grain when possible.",source:"CDC — Finger Foods"},
+  {name:"Pasta",emoji:"🍝",cat:"Grain",age:8,allergens:["Wheat (Gluten)"],nutrients:["Carbohydrates","Iron","B Vitamins"],prep:"Cook until very soft (well past al dente). Fusilli and penne shapes easiest to grip.",detail:"Choose whole wheat or lentil pasta for added nutrition. Toss with olive oil and veggie puree.",source:"CDC — Finger Foods"},
+  {name:"Amaranth",emoji:"🌾",cat:"Grain",age:6,allergens:[],nutrients:["Protein","Iron","Calcium"],prep:"Cook with extra water until porridge consistency. Gluten-free. High in protein.",detail:"Higher protein than most grains. Used in traditional weaning foods across Latin America.",source:"WHO — Complementary Feeding"},
+
+  // ── PROTEINS ──
+  {name:"Chicken",emoji:"🍗",cat:"Protein",age:6,allergens:[],nutrients:["Protein","Iron (Heme)","Zinc","B Vitamins"],prep:"Cook thoroughly and puree with broth. Dark meat (thighs) is higher in iron. Shred for 8mo+.",detail:"Dark meat has 2× the iron of white meat. AAP actually recommends meat as an early food specifically for iron.",source:"AAP — Iron-Rich First Foods"},
+  {name:"Beef",emoji:"🥩",cat:"Protein",age:6,allergens:[],nutrients:["Iron (Heme)","Zinc","Protein","B12"],prep:"Cook well done. Puree with broth for 6mo. Ground beef is easiest. Slow-cooked beef purees beautifully.",detail:"One of the best sources of heme iron — the most easily absorbed form. AAP recommends meat as an early food for this reason.",source:"AAP — Iron-Rich First Foods; CDC — Protein Foods"},
+  {name:"Lamb",emoji:"🍖",cat:"Protein",age:6,allergens:[],nutrients:["Iron (Heme)","Zinc","Protein","B12"],prep:"Cook well done and puree with cooking liquid. Ground lamb works well.",detail:"Excellent heme iron source. Used in German weaning tradition. Pairs well with root vegetables.",source:"AAP — Protein Foods; German Pediatric Guidelines"},
+  {name:"Turkey",emoji:"🦃",cat:"Protein",age:6,allergens:[],nutrients:["Protein","Iron","Zinc","Selenium"],prep:"Cook thoroughly, puree with liquid. Ground turkey cooks quickly. Soft meatballs for 8mo+.",detail:"Lean protein with good iron content. Very versatile for baby meals.",source:"CDC — Protein Foods"},
+  {name:"Salmon",emoji:"🐟",cat:"Protein",age:6,allergens:["Fish"],nutrients:["DHA/Omega-3","Protein","Vitamin D","B12"],prep:"Bake or poach until flakes easily. Check carefully for bones. Naturally soft texture.",detail:"Best food source of DHA for brain development. Choose wild, low-mercury options. AAP recommends fish from 6 months.",source:"AAP — Allergen Introduction; CDC — Seafood"},
+  {name:"Cod",emoji:"🐟",cat:"Protein",age:6,allergens:["Fish"],nutrients:["Protein","B12","Selenium"],prep:"Bake or steam until opaque and flaky. Very mild — good intro to fish. Check for bones.",detail:"Mild white fish, low in mercury. Great introduction to seafood.",source:"CDC — Seafood Safety"},
+  {name:"Sardines",emoji:"🐟",cat:"Protein",age:8,allergens:["Fish"],nutrients:["DHA/Omega-3","Calcium","Protein","Vitamin D"],prep:"Use canned in water. Mash well. Small soft bones are edible and calcium-rich.",detail:"Incredibly nutrient-dense — high in omega-3s and calcium from bones. Affordable DHA source.",source:"AAP — Omega-3 Sources"},
+  {name:"Shrimp",emoji:"🦐",cat:"Protein",age:9,allergens:["Shellfish"],nutrients:["Protein","Selenium","B12","Iron"],prep:"Cook until pink and firm. Chop very finely. Top allergen — introduce carefully with small amount first.",detail:"Top allergen — introduce carefully. Wait 3 days before introducing other new foods after first exposure.",source:"AAP — Top 9 Allergen Introduction"},
+  {name:"Egg",emoji:"🥚",cat:"Protein",age:6,allergens:["Egg"],nutrients:["Protein","Choline","Iron","Vitamin D"],prep:"Scramble, hard-boil, or make omelet — always cook fully. Scrambled is easiest form for babies.",detail:"Best food source of choline for brain development. Early introduction at 6mo may help prevent egg allergy. Whole egg (yolk + white) can be introduced together.",source:"AAP — Allergen Introduction; LEAP/EAT Studies"},
+  {name:"Tofu",emoji:"🧊",cat:"Protein",age:6,allergens:["Soy"],nutrients:["Protein","Iron","Calcium"],prep:"Use firm/extra-firm. Cut into strips or cubes. Can be served as-is or pan-fried. Silken blends into purees.",detail:"Complete plant protein. Roll in ground flax or hemp hearts for grip. Silken tofu mixes into smoothies.",source:"AAP — Plant Protein Sources"},
+  {name:"Chicken Liver",emoji:"🫀",cat:"Protein",age:6,allergens:[],nutrients:["Iron","Vitamin A","B12","Folate"],prep:"Sauté in butter until cooked through. Puree with vegetables to mellow flavor. Small amounts go far.",detail:"The single most iron-dense food. Just 1-2 tbsp provides significant iron. Mix with sweet vegetables.",source:"AAP — Iron-Rich Foods"},
+
+  // ── DAIRY ──
+  {name:"Yogurt (Plain)",emoji:"🥛",cat:"Dairy",age:6,allergens:["Milk"],nutrients:["Calcium","Protein","Probiotics","Vitamin D"],prep:"Choose plain, full-fat. No added sugar. Greek yogurt is thicker and higher in protein.",detail:"Probiotics support gut health. Full-fat is essential — babies need dietary fat. OK before 12 months (unlike cow's milk as a drink).",source:"AAP — Dairy Introduction; CDC — Dairy Foods"},
+  {name:"Cheese",emoji:"🧀",cat:"Dairy",age:6,allergens:["Milk"],nutrients:["Calcium","Protein","Vitamin A"],prep:"Shred, grate, or cut into thin strips. Ricotta and cottage cheese great for 6mo. Harder cheeses as thin slices for 8mo+.",detail:"Choose pasteurized only. Avoid unpasteurized and blue cheeses. Mozzarella strings can be a hazard — cut small.",source:"CDC — Dairy Foods; AAP — Food Safety"},
+  {name:"Cottage Cheese",emoji:"🥛",cat:"Dairy",age:6,allergens:["Milk"],nutrients:["Protein","Calcium","B Vitamins"],prep:"Full-fat, small curd is ideal. Serve as-is or mash slightly. Mix with fruit.",detail:"High in protein and easy to eat. Can be blended smooth for young babies.",source:"CDC — Dairy Foods"},
+
+  // ── LEGUMES ──
+  {name:"Lentils",emoji:"🫘",cat:"Legume",age:6,allergens:[],nutrients:["Iron","Protein","Fiber","Folate"],prep:"Cook until very soft (red lentils ~15 min, fall apart naturally). No soaking needed for red lentils.",detail:"Red lentils dissolve when cooked — natural puree. Pair with Vitamin C for iron absorption. Used as a first food (dal) across India and South Asia.",source:"AAP — Plant Protein; WHO — Dietary Diversity"},
+  {name:"Chickpeas",emoji:"🫘",cat:"Legume",age:8,allergens:[],nutrients:["Protein","Fiber","Iron","Folate"],prep:"Cook very soft or use canned (rinse well). Mash or make hummus. Strain skins for youngest babies.",detail:"Hummus is an excellent serving form — smooth and easy. Used widely in Middle Eastern baby feeding traditions.",source:"WHO — Dietary Diversity"},
+  {name:"Black Beans",emoji:"🫘",cat:"Legume",age:8,allergens:[],nutrients:["Protein","Fiber","Iron","Folate"],prep:"Cook very soft or use canned (rinse). Mash with fork — skins help them hold shape for self-feeding.",detail:"Budget-friendly protein and iron source. Popular in Latin American baby foods.",source:"CDC — Protein Foods"},
+  {name:"Edamame",emoji:"🫛",cat:"Legume",age:8,allergens:["Soy"],nutrients:["Complete Protein","Iron","Fiber"],prep:"Cook frozen until very soft. Mash or puree — skins can be tough. Halve beans for 10mo+ with pincer grasp.",detail:"Complete plant protein. Popular in Japanese baby food (alongside okayu rice porridge).",source:"WHO — Dietary Diversity; AAP — Soy Introduction"},
+
+  // ── NUTS, SEEDS, FATS ──
+  {name:"Peanut Butter",emoji:"🥜",cat:"Nut/Seed",age:4,allergens:["Peanut"],nutrients:["Protein","Healthy Fats","Vitamin E"],prep:"NEVER serve whole peanuts. Thin smooth PB with warm water or breast milk. Mix into purees.",detail:"LEAP study (NEJM 2015): 81% reduction in peanut allergy with early introduction at 4-6 months. AAP now recommends early introduction for high-risk infants.",source:"LEAP Study (NEJM); AAP Allergen Guidelines"},
+  {name:"Almond Butter",emoji:"🌰",cat:"Nut/Seed",age:6,allergens:["Tree Nuts"],nutrients:["Vitamin E","Calcium","Magnesium"],prep:"Never whole nuts. Thin with water, mix into purees. Spread very thin on toast. Start with tiny amount.",detail:"Good source of Vitamin E and calcium. Use smooth, natural varieties.",source:"AAP — Top 9 Allergen Introduction"},
+  {name:"Tahini",emoji:"🫘",cat:"Nut/Seed",age:6,allergens:["Sesame"],nutrients:["Calcium","Iron","Zinc","Healthy Fats"],prep:"Mix small amount into purees, hummus, or yogurt. Sesame is now a top allergen — introduce carefully.",detail:"Sesame was added as the 9th major FDA allergen in 2023. Tahini is the easiest introduction form. Rich in calcium.",source:"FDA FASTER Act 2023; AAP Allergen Guidelines"},
+  {name:"Chia Seeds",emoji:"🫘",cat:"Nut/Seed",age:6,allergens:[],nutrients:["Omega-3","Fiber","Calcium","Iron"],prep:"ALWAYS soak before serving (they expand into gel). Mix into purees, yogurt, oatmeal. Never dry.",detail:"Excellent plant-based omega-3. Dry seeds are a choking hazard — must be soaked or ground.",source:"AAP — Omega-3 Sources"},
+  {name:"Hemp Hearts",emoji:"🌿",cat:"Nut/Seed",age:6,allergens:[],nutrients:["Complete Protein","Omega-3","Iron","Zinc"],prep:"Sprinkle on yogurt, purees, or oatmeal. Soft enough as-is. No prep needed.",detail:"Complete plant protein with ideal omega-3/omega-6 ratio. No allergy concerns. Great daily booster.",source:"AAP — Plant-Based Nutrition"},
+  {name:"Olive Oil",emoji:"🫒",cat:"Fat",age:6,allergens:[],nutrients:["Healthy Fats","Vitamin E","Antioxidants"],prep:"Drizzle ½ to 1 tsp on vegetables, pasta, or into purees. Extra virgin is best.",detail:"Improves fat-soluble vitamin absorption (A, D, E, K). Mediterranean baby feeding staple.",source:"WHO — Dietary Diversity; AAP — Dietary Fat"},
+  {name:"Coconut",emoji:"🥥",cat:"Fat",age:6,allergens:["Tree Nuts"],nutrients:["Healthy Fats","Manganese","Iron"],prep:"Use coconut cream, unsweetened shredded, or coconut oil for cooking.",detail:"FDA classifies as tree nut though true allergy is rare. Great for dairy-free cooking.",source:"FDA Allergen Classification; AAP"},
+  {name:"Butter",emoji:"🧈",cat:"Fat",age:6,allergens:["Milk"],nutrients:["Vitamin A","Healthy Fats","Vitamin D"],prep:"Small amounts for cooking or adding to vegetables. Helps absorb fat-soluble vitamins.",detail:"Helps babies absorb vitamins A, D, E, K from vegetables. A small amount improves nutrition significantly.",source:"AAP — Dietary Fat in Infancy"},
+  {name:"Ground Flaxseed",emoji:"🌾",cat:"Nut/Seed",age:6,allergens:[],nutrients:["Omega-3 (ALA)","Fiber","Lignans"],prep:"Use ground (not whole). Sprinkle into purees, yogurt, oatmeal. 1 tsp per serving. Refrigerate.",detail:"Must be ground for absorption — whole seeds pass through. Store ground flax in fridge (goes rancid).",source:"AAP — Omega-3 Sources"},
+
+  // ── HERBS & SPICES ──
+  {name:"Cinnamon",emoji:"🫙",cat:"Herb/Spice",age:6,allergens:[],nutrients:["Antioxidants","Manganese"],prep:"Tiny pinch in oatmeal, fruit purees, or yogurt. No salt or sugar needed when using spices.",detail:"AAP encourages herbs and spices from 6 months for palate diversity. Pairs with apple, pear, banana, sweet potato.",source:"AAP — Flavor Variety"},
+  {name:"Turmeric",emoji:"🟡",cat:"Herb/Spice",age:6,allergens:[],nutrients:["Curcumin","Antioxidants"],prep:"Tiny pinch in savory purees or scrambled eggs. Stains everything yellow.",detail:"Anti-inflammatory. Used in Indian baby food traditions (in dal and khichdi). Combine with black pepper for absorption.",source:"WHO — Cultural Feeding Practices"},
+  {name:"Cumin",emoji:"🫙",cat:"Herb/Spice",age:6,allergens:[],nutrients:["Iron","Antioxidants"],prep:"Small pinch of ground cumin in lentils, beans, or meat purees.",detail:"Staple spice in Indian, Middle Eastern, and Latin American baby foods. Aids digestion.",source:"WHO — Cultural Feeding Practices"},
+  {name:"Basil",emoji:"🌿",cat:"Herb/Spice",age:6,allergens:[],nutrients:["Vitamin K","Vitamin A","Iron"],prep:"Finely chop fresh basil into purees or pasta. Blend into pesto (basil + olive oil + cheese).",detail:"Fresh herbs introduce wonderful flavors early. Babies in many cultures eat herbs from 6 months.",source:"AAP — Flavor Variety; WHO — Dietary Diversity"},
+  {name:"Garlic",emoji:"🧄",cat:"Herb/Spice",age:6,allergens:[],nutrients:["Vitamin C","Manganese","Selenium"],prep:"Use roasted or sautéed (milder than raw). A little goes a long way.",detail:"Roasted garlic is sweet and mild. Universal flavor enhancer used in baby foods worldwide.",source:"WHO — Cultural Feeding Practices"},
+  {name:"Ginger",emoji:"🫚",cat:"Herb/Spice",age:6,allergens:[],nutrients:["Antioxidants","Gingerol"],prep:"Grate fresh ginger finely into purees. Tiny amounts add warmth. Settles upset tummies.",detail:"Natural digestive aid. Pairs well with carrot, sweet potato, and pear.",source:"WHO — Cultural Feeding Practices"},
+];
+
+const allergenDefs=[
+  {name:"Milk",emoji:"🥛"},{name:"Egg",emoji:"🥚"},{name:"Peanut",emoji:"🥜"},
+  {name:"Tree Nuts",emoji:"🌰"},{name:"Wheat (Gluten)",emoji:"🌾"},{name:"Soy",emoji:"🫘"},
+  {name:"Fish",emoji:"🐟"},{name:"Shellfish",emoji:"🦐"},{name:"Sesame",emoji:"🫘"},
+];
+
+// ═══════════════════════════════════════════════
+// GLOBE DATA — Country first food traditions (35 countries)
+// ═══════════════════════════════════════════════
+const countries=[
+  {name:"Japan",flag:"🇯🇵",lat:36.2,lon:138.3,region:"East Asia",foods:[{emoji:"🍚",name:"Okayu (Rice Porridge)",desc:"Soft rice porridge with dashi broth — the universal Japanese first food"},{emoji:"🎃",name:"Mashed Kabocha",desc:"Japanese pumpkin, steamed and mashed"},{emoji:"🐟",name:"Shirasu (Baby Sardines)",desc:"Tiny dried fish in porridge for protein and DHA"}],ceremony:"Okuizome (お食い初め) — at 100 days, babies are presented an elaborate meal with fish, rice, and a biting stone for strong teeth.",source:"Japanese Ministry of Health"},
+  {name:"India",flag:"🇮🇳",lat:20.6,lon:78.9,region:"South Asia",foods:[{emoji:"🫘",name:"Dal (Lentil Puree)",desc:"Pureed lentils with turmeric and cumin — iron-rich"},{emoji:"🍚",name:"Khichdi",desc:"Rice and lentil porridge with ghee"},{emoji:"🍌",name:"Mashed Banana & Rice",desc:"Sweetened rice with banana"}],ceremony:"Annaprashan — a Hindu ceremony where the baby is fed blessed sweet rice pudding by an elder.",source:"Indian Academy of Pediatrics; WHO"},
+  {name:"Mexico",flag:"🇲🇽",lat:23.6,lon:-102.5,region:"North America",foods:[{emoji:"🥑",name:"Avocado",desc:"Mashed ripe avocado — rich in healthy fats"},{emoji:"🫘",name:"Frijoles (Mashed Beans)",desc:"Smooth refried pinto or black beans"},{emoji:"🌮",name:"Soft Tortilla & Soup",desc:"Babies join family meals with tortilla and broth"}],ceremony:"Babies join family mealtimes early — food is communal from the start.",source:"WHO Regional; Cradle of Nutrition"},
+  {name:"Nigeria",flag:"🇳🇬",lat:9.1,lon:8.7,region:"West Africa",foods:[{emoji:"🌽",name:"Pap (Ogi)",desc:"Fermented corn/millet porridge — the traditional first food"},{emoji:"🍠",name:"Yam Porridge",desc:"Boiled and mashed yam with palm oil"},{emoji:"🥜",name:"Groundnut Soup",desc:"Peanut-based soup with soft starches"}],ceremony:"Feeding is communal — extended family participates. Food paste may be applied to baby's forehead to welcome ancestral spirits.",source:"WHO Africa Region"},
+  {name:"South Korea",flag:"🇰🇷",lat:35.9,lon:127.8,region:"East Asia",foods:[{emoji:"🍚",name:"Juk (Rice Porridge)",desc:"Smooth rice porridge, gradually thickened over weeks"},{emoji:"🥬",name:"Vegetable Juk",desc:"Porridge with spinach, sweet potato, or broccoli"},{emoji:"🥩",name:"Beef Juk",desc:"Porridge with ground beef for iron at ~7 months"}],ceremony:"Korean babies progress through carefully staged juk consistencies — 10:1 water-to-rice ratio, gradually thickened.",source:"Korean Ministry of Health"},
+  {name:"Ethiopia",flag:"🇪🇹",lat:9.1,lon:40.5,region:"East Africa",foods:[{emoji:"🫓",name:"Soft Injera",desc:"Soft fermented teff flatbread torn into small pieces"},{emoji:"🫘",name:"Misir Wot (Lentil Stew)",desc:"Mild red lentil stew with injera"},{emoji:"🥬",name:"Vegetable Purees",desc:"Mashed carrots, potatoes, and greens"}],ceremony:"Babies learn to eat with their hands from the start, using injera to scoop stews.",source:"WHO Africa Region"},
+  {name:"France",flag:"🇫🇷",lat:46.2,lon:2.2,region:"Western Europe",foods:[{emoji:"🥬",name:"Vegetables First",desc:"French pediatricians start with leek, green beans, zucchini — before fruit"},{emoji:"🥕",name:"Purée de Carottes",desc:"Classic carrot puree — beloved first food"},{emoji:"🧀",name:"Fromage Blanc",desc:"Soft cheese introduced around 6-7 months"}],ceremony:"Éducation au goût — flavor education is a national priority. Babies are expected to eat adult food by age 2.",source:"French National Nutrition Programme"},
+  {name:"Germany",flag:"🇩🇪",lat:51.2,lon:10.4,region:"Central Europe",foods:[{emoji:"🥔",name:"Kartoffelbrei",desc:"Mashed potato forms the base of the traditional first meal"},{emoji:"🥩",name:"Meat-Veggie-Potato",desc:"The recommended combo: meat + vegetable + potato for iron"},{emoji:"🥕",name:"Carrot Puree",desc:"Usually the first single vegetable introduced"}],ceremony:"German guidelines specifically recommend meat-vegetable-potato combination to maximize iron from the first meals.",source:"German Federal Institute for Risk Assessment"},
+  {name:"Peru",flag:"🇵🇪",lat:-9.2,lon:-75.0,region:"South America",foods:[{emoji:"🍈",name:"Granadilla",desc:"Sweet passion fruit pulp — rich in phosphorus, iron, calcium"},{emoji:"🥔",name:"Papa (Potato)",desc:"Peru has 3,000+ potato varieties — mashed potato is natural"},{emoji:"🥑",name:"Palta (Avocado)",desc:"Mashed Peruvian avocado"}],ceremony:"Granadilla is often the ceremonial first taste — sweet pulp considered perfect for the very first introduction.",source:"Peruvian Ministry of Health"},
+  {name:"China",flag:"🇨🇳",lat:35.9,lon:104.2,region:"East Asia",foods:[{emoji:"🍚",name:"Congee (Xi Fan)",desc:"Thin rice porridge — the foundational first food"},{emoji:"🥚",name:"Steamed Egg Yolk",desc:"Crumbled into congee around 6-7 months"},{emoji:"🐟",name:"Steamed White Fish",desc:"Mild fish flaked into porridge for DHA"}],ceremony:"Congee consistency follows stages: very thin → thick → soft rice → regular rice, over months.",source:"Chinese Nutrition Society"},
+  {name:"Sweden",flag:"🇸🇪",lat:60.1,lon:18.6,region:"Northern Europe",foods:[{emoji:"🍌",name:"Mashed Fruits",desc:"Banana and soft fruits — common first tastes"},{emoji:"🥣",name:"Välling",desc:"Wheat-based warm cereal drink — uniquely Scandinavian"},{emoji:"🥕",name:"Root Vegetable Purees",desc:"Parsnip, carrot, potato purees"}],ceremony:"Välling bridges the gap between milk and solid food — a distinctly Swedish tradition.",source:"Swedish National Food Agency"},
+  {name:"Kenya",flag:"🇰🇪",lat:-0.02,lon:37.9,region:"East Africa",foods:[{emoji:"🍠",name:"Sweet Potato",desc:"Chosen for high Vitamin A to combat deficiency"},{emoji:"🌽",name:"Uji (Millet Porridge)",desc:"Fermented millet or sorghum porridge"},{emoji:"🍌",name:"Mashed Banana",desc:"Readily available and easy to prepare"}],ceremony:"Sweet potato is promoted by WHO programs to address Vitamin A deficiency in Kenyan infants.",source:"WHO Kenya Nutrition Program"},
+  {name:"Vietnam",flag:"🇻🇳",lat:14.1,lon:108.3,region:"Southeast Asia",foods:[{emoji:"🍚",name:"Cháo (Rice Soup)",desc:"Rice soup with chicken/pork broth and fish sauce"},{emoji:"🦐",name:"Ground Shrimp Soup",desc:"Protein-rich soup with shrimp, potatoes, carrots"},{emoji:"🥬",name:"Rau (Greens)",desc:"Leafy greens blended into rice soup"}],ceremony:"Vietnamese baby soups are notably savory — fish sauce is introduced as seasoning early.",source:"WHO Southeast Asia"},
+  {name:"Thailand",flag:"🇹🇭",lat:15.9,lon:100.9,region:"Southeast Asia",foods:[{emoji:"🍚",name:"Khao Tom (Rice Soup)",desc:"Soft rice soup with mild broth"},{emoji:"🍌",name:"Kluay (Banana)",desc:"Mashed ripe banana — available year-round"},{emoji:"🥥",name:"Coconut Water",desc:"Small amounts for hydration in tropical climate"}],ceremony:"Thai babies are gradually introduced to sweet, then sour, salty, and mild spice.",source:"Thai Ministry of Public Health"},
+  {name:"Brazil",flag:"🇧🇷",lat:-14.2,lon:-51.9,region:"South America",foods:[{emoji:"🍌",name:"Banana Puree",desc:"The most common first food nationwide"},{emoji:"🥕",name:"Vegetable Soup",desc:"Blended soups with local vegetables and rice"},{emoji:"🫘",name:"Feijão (Bean Puree)",desc:"Mashed beans — a daily staple from earliest meals"}],ceremony:"Beans and rice form the core of the Brazilian diet from infancy onward.",source:"Brazilian Society of Pediatrics"},
+  {name:"Italy",flag:"🇮🇹",lat:41.9,lon:12.6,region:"Southern Europe",foods:[{emoji:"🍎",name:"Apple & Pear Puree",desc:"Traditional Italian first taste"},{emoji:"🥣",name:"Crema di Riso",desc:"Cream of rice with vegetable broth"},{emoji:"🫒",name:"Olive Oil & Parmigiano",desc:"EVOO and grated Parmigiano in purees from day one"}],ceremony:"Olive oil is considered essential from the first meals — Mediterranean flavor education.",source:"Italian Society of Pediatrics"},
+  {name:"Ghana",flag:"🇬🇭",lat:7.9,lon:-1.0,region:"West Africa",foods:[{emoji:"🌽",name:"Koko (Corn Porridge)",desc:"Fermented corn porridge — staple first food"},{emoji:"🥜",name:"Groundnut Soup",desc:"Peanut-based soup with tomatoes"},{emoji:"🍠",name:"Mashed Yam",desc:"White yam with palm oil"}],ceremony:"Food paste applied to baby's forehead to welcome ancestral spirits during first feeding.",source:"WHO Africa Region"},
+  {name:"Philippines",flag:"🇵🇭",lat:12.9,lon:121.8,region:"Southeast Asia",foods:[{emoji:"🍚",name:"Lugaw (Rice Porridge)",desc:"Rice porridge with chicken broth"},{emoji:"🍌",name:"Saging (Banana)",desc:"Mashed ripe saba banana"},{emoji:"🥔",name:"Kamote (Sweet Potato)",desc:"Steamed purple or orange sweet potato"}],ceremony:"Lugaw is the universal Filipino weaning food — nearly every baby starts here.",source:"Philippine Pediatric Society"},
+  // ── EXPANDED: 17 more countries ──
+  {name:"United States",flag:"🇺🇸",lat:39.8,lon:-98.6,region:"North America",foods:[{emoji:"🥣",name:"Iron-Fortified Cereal",desc:"Oat or rice cereal mixed with breast milk — AAP-recommended starter"},{emoji:"🍠",name:"Sweet Potato Puree",desc:"One of the most popular first purees"},{emoji:"🥑",name:"Mashed Avocado",desc:"Rich in healthy fats, no cooking needed"}],ceremony:"AAP recommends introducing solids around 6 months. No required order — nutrient density is prioritized.",source:"AAP Infant Feeding Guidelines; CDC"},
+  {name:"United Kingdom",flag:"🇬🇧",lat:55.4,lon:-3.4,region:"Northern Europe",foods:[{emoji:"🥕",name:"Carrot & Parsnip",desc:"Root vegetable purees are traditional NHS-recommended starters"},{emoji:"🍌",name:"Mashed Banana",desc:"Soft, sweet, and needs no cooking"},{emoji:"🥦",name:"Broccoli Florets",desc:"NHS promotes baby-led weaning with soft cooked vegetables"}],ceremony:"NHS recommends starting at 6 months. Baby-led weaning (BLW) originated in the UK and is increasingly popular.",source:"NHS Start4Life; UK Dept of Health"},
+  {name:"Canada",flag:"🇨🇦",lat:56.1,lon:-106.3,region:"North America",foods:[{emoji:"🥩",name:"Iron-Rich Meats",desc:"Health Canada recommends meat as first food for iron"},{emoji:"🥚",name:"Whole Egg",desc:"Scrambled egg — allergen introduction encouraged early"},{emoji:"🫘",name:"Lentil Puree",desc:"Mashed lentils with mild spices"}],ceremony:"Health Canada uniquely emphasizes meat and alternatives as the very first foods — prioritizing iron above all.",source:"Health Canada Infant Feeding Guidelines"},
+  {name:"Australia",flag:"🇦🇺",lat:-25.3,lon:133.8,region:"Oceania",foods:[{emoji:"🍠",name:"Sweet Potato & Pumpkin",desc:"Roasted and mashed — quintessential Aussie first foods"},{emoji:"🥑",name:"Avocado",desc:"Mashed avo — affordable and available year-round"},{emoji:"🥩",name:"Pureed Lamb",desc:"Iron-rich red meat puree following NHMRC guidelines"}],ceremony:"NHMRC recommends introducing solids at around 6 months, with iron-rich foods as the priority.",source:"Australian NHMRC Infant Feeding Guidelines"},
+  {name:"New Zealand",flag:"🇳🇿",lat:-40.9,lon:174.9,region:"Oceania",foods:[{emoji:"🍠",name:"Kūmara (Sweet Potato)",desc:"Māori staple — roasted and mashed for babies"},{emoji:"🥬",name:"Puha (Sow Thistle)",desc:"Traditional Māori green, cooked until very soft"},{emoji:"🐟",name:"Steamed Fish",desc:"Fresh white fish — NZ's abundant seafood tradition"}],ceremony:"Māori culture integrates traditional foods like kūmara into weaning alongside modern NZ guidelines.",source:"NZ Ministry of Health; Māori Health"},
+  {name:"Turkey",flag:"🇹🇷",lat:38.9,lon:35.2,region:"Western Asia",foods:[{emoji:"🥣",name:"Tarhana Soup",desc:"Fermented grain and yogurt soup — traditional weaning food"},{emoji:"🥛",name:"Yogurt",desc:"Plain full-fat yogurt from ~6 months — Turkey is the birthplace of yogurt"},{emoji:"🫘",name:"Red Lentil Soup",desc:"Smooth mercimek çorbası — a daily staple"}],ceremony:"Tarhana is a uniquely Turkish fermented food — dried into powder, then reconstituted as a nutritious soup for babies.",source:"Turkish Pediatric Association"},
+  {name:"Egypt",flag:"🇪🇬",lat:26.8,lon:30.8,region:"North Africa",foods:[{emoji:"🍚",name:"Rice Pudding (Roz bi Laban)",desc:"Creamy rice pudding — traditional first sweet food"},{emoji:"🫘",name:"Foul (Fava Beans)",desc:"Mashed fava beans — protein-rich staple"},{emoji:"🥕",name:"Vegetable Puree",desc:"Carrots, potatoes, and zucchini pureed smooth"}],ceremony:"Rice pudding is often the ceremonial first food — sweetness is believed to bring the baby a sweet life.",source:"Egyptian Pediatric Association; WHO EMRO"},
+  {name:"Morocco",flag:"🇲🇦",lat:31.8,lon:-7.1,region:"North Africa",foods:[{emoji:"🌾",name:"Sfouf (Semolina Porridge)",desc:"Semolina cooked with milk and cinnamon"},{emoji:"🫒",name:"Olive Oil",desc:"Drizzled on purees — Mediterranean tradition"},{emoji:"🥕",name:"Carrot & Potato Puree",desc:"Root vegetables mashed smooth"}],ceremony:"Sfouf porridge is a generations-old Moroccan tradition — semolina with warming spices.",source:"Moroccan Ministry of Health; WHO EMRO"},
+  {name:"South Africa",flag:"🇿🇦",lat:-30.6,lon:22.9,region:"Southern Africa",foods:[{emoji:"🌽",name:"Pap (Maize Porridge)",desc:"Soft maize meal porridge — the national staple from infancy"},{emoji:"🍠",name:"Butternut Squash",desc:"Roasted and mashed — sweet and nutritious"},{emoji:"🍌",name:"Mashed Banana",desc:"Widely available and easy to prepare"}],ceremony:"Pap (maize porridge) forms the foundation of South African diet across all cultures from earliest meals.",source:"South African Dept of Health; WHO"},
+  {name:"Indonesia",flag:"🇮🇩",lat:-5.0,lon:120.0,region:"Southeast Asia",foods:[{emoji:"🍌",name:"Pisang (Banana)",desc:"Mashed banana — the most common first food"},{emoji:"🍚",name:"Bubur (Rice Porridge)",desc:"Soft rice porridge with vegetable broth"},{emoji:"🧈",name:"Tim (Steamed Rice)",desc:"Steamed rice with fish or chicken mixed in"}],ceremony:"Bubur (rice porridge) transitions from very smooth to chunky as baby grows — similar to East Asian traditions.",source:"Indonesian Pediatric Society; WHO"},
+  {name:"Bangladesh",flag:"🇧🇩",lat:23.7,lon:90.4,region:"South Asia",foods:[{emoji:"🍚",name:"Khichuri",desc:"Rice and lentil porridge with vegetables and oil"},{emoji:"🐟",name:"Mashed Fish",desc:"Soft river fish — Bangladesh's primary protein source"},{emoji:"🍌",name:"Mashed Banana",desc:"Kolá (banana) mashed for easy digestion"}],ceremony:"Khichuri is the universal Bangladeshi weaning food — nutritious combination of rice, lentils, and vegetables.",source:"Bangladesh National Nutrition; WHO"},
+  {name:"Colombia",flag:"🇨🇴",lat:4.6,lon:-74.1,region:"South America",foods:[{emoji:"🍌",name:"Plátano (Plantain)",desc:"Cooked and mashed green or ripe plantain"},{emoji:"🫘",name:"Frijoles (Bean Soup)",desc:"Smooth bean soup with rice"},{emoji:"🥑",name:"Aguacate (Avocado)",desc:"Mashed avocado — available and affordable"}],ceremony:"Colombian babies transition to family foods early — bean soup with rice is a daily staple.",source:"Colombian Society of Pediatrics; WHO"},
+  {name:"Argentina",flag:"🇦🇷",lat:-38.4,lon:-63.6,region:"South America",foods:[{emoji:"🎃",name:"Zapallo (Squash)",desc:"Baked butternut squash — sweet and soft"},{emoji:"🥩",name:"Carne (Beef Puree)",desc:"Pureed beef — Argentina's cattle culture starts early"},{emoji:"🍎",name:"Apple Compote",desc:"Cooked apple puree with a touch of cinnamon"}],ceremony:"Argentina's beef tradition means red meat is often one of the first proteins introduced.",source:"Argentine Society of Pediatrics"},
+  {name:"Spain",flag:"🇪🇸",lat:40.5,lon:-3.7,region:"Southern Europe",foods:[{emoji:"🐟",name:"Merluza (Hake)",desc:"Steamed white fish — very popular Spanish baby food"},{emoji:"🥕",name:"Vegetable Puree",desc:"Pureed green beans, carrot, potato with olive oil"},{emoji:"🍎",name:"Fruit Compote",desc:"Apple, pear, and banana mixed puree"}],ceremony:"Spanish pediatricians follow a structured introduction: vegetables first, then fruit, then protein.",source:"Spanish Association of Pediatrics"},
+  {name:"Greece",flag:"🇬🇷",lat:39.1,lon:21.8,region:"Southern Europe",foods:[{emoji:"🫒",name:"Olive Oil",desc:"EVOO is added to every puree from the start"},{emoji:"🥛",name:"Yogurt with Honey (12mo+)",desc:"Greek yogurt — thick and protein-rich"},{emoji:"🫘",name:"Faki (Lentil Soup)",desc:"Red lentil soup — a staple family food"}],ceremony:"Greek tradition includes olive oil in baby food from the earliest meals — Mediterranean diet from birth.",source:"Hellenic Pediatric Society"},
+  {name:"Israel",flag:"🇮🇱",lat:31.0,lon:34.9,region:"Western Asia",foods:[{emoji:"🥑",name:"Avocado",desc:"Mashed avocado — popular first food"},{emoji:"🫘",name:"Hummus",desc:"Smooth chickpea puree with tahini"},{emoji:"🥜",name:"Bamba (Peanut Puffs)",desc:"Peanut-flavored puffs — Israeli babies eat these from ~7mo"}],ceremony:"Israel's early peanut exposure through Bamba snacks inspired the LEAP study — Israeli children have very low peanut allergy rates.",source:"EAT Study; Israeli Ministry of Health"},
+  {name:"Saudi Arabia",flag:"🇸🇦",lat:23.9,lon:45.1,region:"Western Asia",foods:[{emoji:"🟤",name:"Dates",desc:"Softened date paste (tahneek) — traditional first taste"},{emoji:"🍚",name:"Rice Cereal",desc:"Soft rice porridge with milk"},{emoji:"🥛",name:"Yogurt (Laban)",desc:"Plain yogurt from ~6 months"}],ceremony:"Tahneek — softening a date and rubbing it on the newborn's palate. An ancient Islamic tradition practiced across the Arabian Peninsula.",source:"Saudi Pediatric Association; WHO EMRO"},
+];
+
+// ═══════════════════════════════════════════════
+// THREE.JS DOT-MATRIX GLOBE
+// ═══════════════════════════════════════════════
+let scene,camera,renderer,globe,countryMeshes=[],raycaster,mouse;
+const canvas=document.getElementById('globeCanvas');
+
+// Point-in-polygon test (ray casting)
+function ptInPoly(testLon,testLat,poly){
+  let inside=false;
+  for(let i=0,j=poly.length-1;i<poly.length;j=i++){
+    const xi=poly[i][0],yi=poly[i][1],xj=poly[j][0],yj=poly[j][1];
+    if((yi>testLat)!==(yj>testLat)&&testLon<(xj-xi)*(testLat-yi)/(yj-yi)+xi) inside=!inside;
+  }
+  return inside;
+}
+function isLand(lat,lon){
+  for(const poly of LAND_POLYS){if(ptInPoly(lon,lat,poly))return true}
+  return false;
+}
+
+function latLonToVec3(lat,lon,r){
+  const phi=(90-lat)*Math.PI/180,theta=(lon+180)*Math.PI/180;
+  return new THREE.Vector3(-r*Math.sin(phi)*Math.cos(theta),r*Math.cos(phi),r*Math.sin(phi)*Math.sin(theta));
+}
+
+function initGlobe(){
+  const W=canvas.clientWidth,H=canvas.clientHeight;
+  scene=new THREE.Scene();
+  camera=new THREE.PerspectiveCamera(45,W/H,0.1,1000);
+  camera.position.z=3.0;
+
+  renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setSize(W,H);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+
+  // Globe group
+  globe=new THREE.Group();
+  scene.add(globe);
+
+  // Dark base sphere (ocean)
+  const baseMat=new THREE.MeshPhongMaterial({color:0x0a0a14,emissive:0x050510,specular:0x222244,shininess:15,transparent:true,opacity:0.85});
+  const baseSphere=new THREE.Mesh(new THREE.SphereGeometry(0.99,64,64),baseMat);
+  globe.add(baseSphere);
+
+  // ── DOT MATRIX ──
+  // Adapt density to device: fewer dots on mobile for 60fps
+  const isMobile=W<600;
+  const dotStep=isMobile?3.5:2;
+  const landDotSize=isMobile?0.022:0.018;
+  const waterDotSize=isMobile?0.01:0.008;
+  const landPositions=[],landColors=[];
+  const waterPositions=[],waterColors=[];
+  const landColor=new THREE.Color(0.30,0.50,0.85);
+  const waterColor=new THREE.Color(0.10,0.10,0.16);
+
+  for(let lat=-80;lat<=80;lat+=dotStep){
+    const lonStep=Math.max(dotStep,dotStep/Math.cos(lat*Math.PI/180));
+    for(let lon=-180;lon<180;lon+=lonStep){
+      const pos=latLonToVec3(lat,lon,1.005);
+      if(isLand(lat,lon)){
+        landPositions.push(pos.x,pos.y,pos.z);
+        // Slight color variation for visual richness
+        const vary=0.85+Math.random()*0.3;
+        landColors.push(landColor.r*vary,landColor.g*vary,landColor.b*vary);
+      } else {
+        waterPositions.push(pos.x,pos.y,pos.z);
+        waterColors.push(waterColor.r,waterColor.g,waterColor.b);
+      }
+    }
+  }
+
+  // Land dots (larger, brighter)
+  const landGeo=new THREE.BufferGeometry();
+  landGeo.setAttribute('position',new THREE.Float32BufferAttribute(landPositions,3));
+  landGeo.setAttribute('color',new THREE.Float32BufferAttribute(landColors,3));
+  const landMat=new THREE.PointsMaterial({size:landDotSize,vertexColors:true,sizeAttenuation:true,transparent:true,opacity:0.9});
+  globe.add(new THREE.Points(landGeo,landMat));
+
+  // Water dots (smaller, dimmer) — skip on mobile for performance
+  const waterGeo=new THREE.BufferGeometry();
+  waterGeo.setAttribute('position',new THREE.Float32BufferAttribute(waterPositions,3));
+  waterGeo.setAttribute('color',new THREE.Float32BufferAttribute(waterColors,3));
+  const waterMat=new THREE.PointsMaterial({size:waterDotSize,vertexColors:true,sizeAttenuation:true,transparent:true,opacity:isMobile?0.15:0.35});
+  globe.add(new THREE.Points(waterGeo,waterMat));
+
+  // ── ATMOSPHERE GLOW ──
+  const glowGeo=new THREE.SphereGeometry(1.12,48,48);
+  const glowMat=new THREE.ShaderMaterial({
+    vertexShader:`varying vec3 vNormal;void main(){vNormal=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+    fragmentShader:`varying vec3 vNormal;void main(){float i=pow(0.6-dot(vNormal,vec3(0,0,1.0)),3.0);gl_FragColor=vec4(0.25,0.42,0.88,1.0)*i*0.6;}`,
+    blending:THREE.AdditiveBlending,side:THREE.BackSide,transparent:true
+  });
+  scene.add(new THREE.Mesh(glowGeo,glowMat));
+
+  // Inner glow
+  const innerGlowGeo=new THREE.SphereGeometry(1.03,48,48);
+  const innerGlowMat=new THREE.ShaderMaterial({
+    vertexShader:`varying vec3 vNormal;void main(){vNormal=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+    fragmentShader:`varying vec3 vNormal;void main(){float i=pow(0.75-dot(vNormal,vec3(0,0,1.0)),2.0);gl_FragColor=vec4(0.2,0.35,0.8,1.0)*i*0.2;}`,
+    blending:THREE.AdditiveBlending,side:THREE.FrontSide,transparent:true
+  });
+  scene.add(new THREE.Mesh(innerGlowGeo,innerGlowMat));
+
+  // ── COUNTRY MARKERS ──
+  countries.forEach((c,i)=>{
+    const pos=latLonToVec3(c.lat,c.lon,1.025);
+    // Glowing dot
+    const dotGeo=new THREE.SphereGeometry(0.015,16,16);
+    const dotMat=new THREE.MeshBasicMaterial({color:0xf59e0b}); // amber
+    const dot=new THREE.Mesh(dotGeo,dotMat);
+    dot.position.copy(pos);
+    dot.userData={index:i};
+    globe.add(dot);
+    countryMeshes.push(dot);
+
+    // Outer ring
+    const ringGeo=new THREE.RingGeometry(0.02,0.028,24);
+    const ringMat=new THREE.MeshBasicMaterial({color:0xf59e0b,transparent:true,opacity:0.4,side:THREE.DoubleSide});
+    const ring=new THREE.Mesh(ringGeo,ringMat);
+    ring.position.copy(pos);
+    ring.lookAt(pos.clone().multiplyScalar(2));
+    ring.userData={ring:true,baseOpacity:0.4,index:i};
+    globe.add(ring);
+    countryMeshes.push(ring);
+  });
+
+  // ── LIGHTING ──
+  scene.add(new THREE.AmbientLight(0x404060,0.5));
+  const dir=new THREE.DirectionalLight(0xffffff,0.7);
+  dir.position.set(5,3,5);
+  scene.add(dir);
+  const rim=new THREE.DirectionalLight(0x6366f1,0.25);
+  rim.position.set(-3,-2,4);
+  scene.add(rim);
+
+  // ── INTERACTION ──
+  raycaster=new THREE.Raycaster();
+  raycaster.params.Points={threshold:0.05};
+  mouse=new THREE.Vector2();
+
+  let isDragging=false,prevMouse={x:0,y:0},rotVel={x:0,y:0},dragDist=0;
+
+  canvas.addEventListener('pointerdown',e=>{
+    isDragging=true;dragDist=0;prevMouse={x:e.clientX,y:e.clientY};rotVel={x:0,y:0};
+  });
+  window.addEventListener('pointermove',e=>{
+    if(!isDragging)return;
+    const dx=e.clientX-prevMouse.x,dy=e.clientY-prevMouse.y;
+    dragDist+=Math.abs(dx)+Math.abs(dy);
+    globe.rotation.y+=dx*0.005;
+    globe.rotation.x+=dy*0.005;
+    globe.rotation.x=Math.max(-1.2,Math.min(1.2,globe.rotation.x));
+    rotVel={x:dy*0.003,y:dx*0.003};
+    prevMouse={x:e.clientX,y:e.clientY};
+  });
+  window.addEventListener('pointerup',()=>{isDragging=false});
+
+  canvas.addEventListener('click',e=>{
+    if(dragDist>8)return; // was a drag, not a click
+    const rect=canvas.getBoundingClientRect();
+    mouse.x=((e.clientX-rect.left)/rect.width)*2-1;
+    mouse.y=-((e.clientY-rect.top)/rect.height)*2+1;
+    raycaster.setFromCamera(mouse,camera);
+    // Only test non-ring meshes
+    const clickable=countryMeshes.filter(m=>!m.userData.ring);
+    const hits=raycaster.intersectObjects(clickable);
+    if(hits.length>0){showCountry(countries[hits[0].object.userData.index])}
+  });
+
+  // ── ANIMATE ──
+  (function animate(){
+    requestAnimationFrame(animate);
+    if(!isDragging){
+      globe.rotation.y+=0.0015;
+      if(Math.abs(rotVel.y)>0.0001){globe.rotation.y+=rotVel.y;rotVel.y*=0.96}
+      if(Math.abs(rotVel.x)>0.0001){globe.rotation.x+=rotVel.x;rotVel.x*=0.96}
+    }
+    // Pulse country markers
+    const t=Date.now()*0.003;
+    countryMeshes.forEach((m,i)=>{
+      if(m.userData.ring){
+        m.material.opacity=m.userData.baseOpacity*(0.5+Math.sin(t+i)*0.5);
+      } else {
+        m.scale.setScalar(0.85+Math.sin(t+i*0.7)*0.25);
+      }
+    });
+    renderer.render(scene,camera);
+  })();
+
+  window.addEventListener('resize',()=>{
+    const W=canvas.clientWidth,H=canvas.clientHeight;
+    camera.aspect=W/H;camera.updateProjectionMatrix();renderer.setSize(W,H);
+  });
+}
+
+function showCountry(c){
+  const panel=document.getElementById('countryPanel');
+  const content=document.getElementById('countryContent');
+  let html=`<div class="country-flag">${c.flag}</div><div class="country-name">${c.name}</div><div class="country-region">${c.region}</div><div class="country-foods">${c.foods.map(f=>`<div class="country-food-item"><div class="country-food-emoji">${f.emoji}</div><div class="country-food-info"><h4>${f.name}</h4><p>${f.desc}</p></div></div>`).join('')}</div>`;
+  if(c.ceremony) html+=`<div class="country-ceremony"><strong>Tradition:</strong> ${c.ceremony}</div>`;
+  html+=`<div style="margin-top:12px;font-size:11px;color:var(--grey-600);font-style:italic">Source: ${c.source}</div>`;
+  content.innerHTML=html;panel.classList.add('visible');
+}
+function closePanel(){document.getElementById('countryPanel').classList.remove('visible')}
+
+// ═══════════════════════════════════════════════
+// FOOD EXPLORER
+// ═══════════════════════════════════════════════
+let activeAge=null,activeCat=null,activeAllergen=null,searchQ='',openCard=null;
+const allCats=[...new Set(foods.map(f=>f.cat))];
+
+function renderAgePills(){
+  const el=document.getElementById('agePills');
+  const ages=[4,6,8,9];
+  el.innerHTML=`<button class="pill ${activeAge===null?'active':''}" onclick="setAge(null)">All ages</button>`+
+    ages.map(a=>`<button class="pill ${activeAge===a?'active':''}" onclick="setAge(${a})">${a}mo+</button>`).join('');
+}
+function renderCatPills(){
+  const el=document.getElementById('catPills');
+  el.innerHTML=`<button class="pill ${activeCat===null?'active':''}" onclick="setCat(null)">All categories</button>`+
+    allCats.map(c=>`<button class="pill ${activeCat===c?'active':''}" onclick="setCat('${c}')">${c}</button>`).join('');
+}
+function renderAllergenGrid(){
+  const el=document.getElementById('allergenGrid');
+  el.innerHTML=allergenDefs.map(a=>{
+    const count=foods.filter(f=>f.allergens.includes(a.name)).length;
+    const isActive=activeAllergen===a.name;
+    return`<div class="allergen-card${isActive?' active':''}" onclick="setAllergen('${a.name}')" style="${isActive?'background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.3)':''}">
+      <div class="allergen-card-emoji">${a.emoji}</div>
+      <div class="allergen-card-name">${a.name}</div>
+      <div class="allergen-card-count">${count} food${count!==1?'s':''}</div>
+    </div>`;
+  }).join('');
+}
+function renderGrid(){
+  const grid=document.getElementById('foodGrid');
+  const empty=document.getElementById('emptyState');
+  const titleEl=document.getElementById('explorerTitle');
+  const countEl=document.getElementById('explorerCount');
+  let f=[...foods];
+  if(activeAge!==null)f=f.filter(x=>x.age===activeAge);
+  if(activeCat!==null)f=f.filter(x=>x.cat===activeCat);
+  if(activeAllergen!==null)f=f.filter(x=>x.allergens.includes(activeAllergen));
+  if(searchQ){
+    const q=searchQ.toLowerCase();
+    f=f.filter(x=>x.name.toLowerCase().includes(q)||x.cat.toLowerCase().includes(q)||
+      x.nutrients.some(n=>n.toLowerCase().includes(q))||x.allergens.some(a=>a.toLowerCase().includes(q)));
+  }
+  f.sort((a,b)=>a.age-b.age||a.name.localeCompare(b.name));
+  let title='All Foods';
+  if(activeAge)title=`From ${activeAge} months`;
+  if(activeCat)title=activeCat;
+  if(activeAllergen)title=`${activeAllergen} foods`;
+  if(searchQ)title=`"${searchQ}"`;
+  titleEl.textContent=title;
+  countEl.textContent=`${f.length} of ${foods.length}`;
+  if(!f.length){grid.innerHTML='';empty.style.display='block';return}
+  empty.style.display='none';
+  grid.innerHTML=f.map(x=>{
+    const isOpen=openCard===x.name;
+    return`<div class="food-card${isOpen?' open':''}" onclick="toggleCard('${x.name.replace(/'/g,"\\'")}')">
+      <div class="food-card-top">
+        <div class="food-card-emoji">${x.emoji}</div>
+        <div class="food-card-meta">
+          <div class="food-card-name">${x.name}</div>
+          <div class="food-card-cat">${x.cat}</div>
+          <div class="food-card-age">From ${x.age} months</div>
+        </div>
+      </div>
+      <div class="food-card-nutrients">
+        ${x.nutrients.map(n=>`<span class="nutrient-chip">${n}</span>`).join('')}
+        ${x.allergens.map(a=>`<span class="nutrient-chip allergen-chip">⚠️ ${a}</span>`).join('')}
+      </div>
+      <div class="food-card-prep">${x.prep}</div>
+      <div class="food-card-source">${x.source}</div>
+      <div class="food-card-detail">
+        <div class="food-detail-box">
+          <strong>Notes:</strong> ${x.detail}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function toggleCard(n){openCard=openCard===n?null:n;renderGrid()}
+function setAge(v){activeAge=activeAge===v?null:v;openCard=null;renderAgePills();renderGrid()}
+function setCat(v){activeCat=activeCat===v?null:v;openCard=null;renderCatPills();renderGrid()}
+function setAllergen(v){
+  activeAllergen=activeAllergen===v?null:v;openCard=null;
+  renderAllergenGrid();renderGrid();
+  if(activeAllergen)document.getElementById('explorerSection').scrollIntoView({behavior:'smooth'});
+}
+
+document.getElementById('searchInput').addEventListener('input',function(){
+  searchQ=this.value.trim();openCard=null;renderGrid();
+});
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',()=>{
+  initGlobe();
+  renderAgePills();renderCatPills();renderAllergenGrid();renderGrid();
+});
+</script>
+</body>
+</html>
