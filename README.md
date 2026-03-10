@@ -1,5 +1,7 @@
 # First Bites
 
+![Visitors](https://visitor-badge.laobi.icu/badge?page_id=vipinkashyap.bffds)
+
 **How the world feeds its babies** — an interactive guide to first foods across 35 countries, backed by WHO, CDC, and AAP guidelines.
 
 [**Live site →**](https://vipinkashyap.github.io/bffds/)
